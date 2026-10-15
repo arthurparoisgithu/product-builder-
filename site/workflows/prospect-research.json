@@ -1,0 +1,140 @@
+{
+  "name": "Prospection — recherche publique contrôlée",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "9e4ba998-1e5a-4f15-a8cf-43341f661001",
+      "name": "Déclencheur manuel",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -760,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Recherche publique, à lancer manuellement\n\n1. Importer le modèle puis utiliser **Test workflow** / exécution manuelle.\n2. Le seul appel externe est le GET vers l’API publique de recherche d’entreprises.\n3. Vérifier les critères avant chaque lancement. Le résultat ne crée ni message, ni contact, ni fiche CRM.\n4. Seuls les établissements de `matching_etablissements` correspondant au code postal sont retenus : le siège n’est jamais supposé être à Nantes.\n\nAucun identifiant n8n ni paramètre d’accès n’est requis.",
+        "height": 310,
+        "width": 390,
+        "color": 5
+      },
+      "id": "9e4ba998-1e5a-4f15-a8cf-43341f661005",
+      "name": "Instructions n8n — prospection publique",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -790,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Paramètres documentés de l’API Recherche d’entreprises.\n// code_postal cible les établissements ; activite_principale cible l’unité légale.\nconst criteres = {\n  code_postal: '44000',\n  activite_principale: '62.01Z',\n  etat_administratif: 'A',\n  per_page: 25,\n  ville_reference: 'Nantes',\n  source_api: 'https://recherche-entreprises.api.gouv.fr/search',\n  source_annuaire: 'Annuaire des entreprises — données publiques',\n  regles: {\n    per_page_maximum: 25,\n    selection: 'matching_etablissements avec le code postal demandé ; jamais le siège par défaut',\n    enrichissement: 'aucun enrichissement réseau, aucune adresse e-mail inventée'\n  }\n};\n\nreturn [{ json: criteres }];"
+      },
+      "id": "9e4ba998-1e5a-4f15-a8cf-43341f661002",
+      "name": "Configurer les critères publics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://recherche-entreprises.api.gouv.fr/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "code_postal",
+              "value": "={{ $json.code_postal }}"
+            },
+            {
+              "name": "activite_principale",
+              "value": "={{ $json.activite_principale }}"
+            },
+            {
+              "name": "etat_administratif",
+              "value": "={{ $json.etat_administratif }}"
+            },
+            {
+              "name": "per_page",
+              "value": "={{ $json.per_page }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "9e4ba998-1e5a-4f15-a8cf-43341f661003",
+      "name": "Rechercher dans l’API publique",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -220,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Réponse de l’API : on ne consulte que les champs publics reçus.\n// Aucun repli vers `siege` : un établissement doit figurer dans matching_etablissements.\nconst reponse = $input.first()?.json ?? {};\nconst criteres = $('Configurer les critères publics').first().json;\nconst resultats = Array.isArray(reponse.results) ? reponse.results : [];\nconst codePostal = String(criteres.code_postal || '');\nconst villeReference = String(criteres.ville_reference || '').trim().toLocaleUpperCase('fr-FR');\nconst dejaVu = new Set();\nconst prospects = [];\n\nconst texte = (valeur) => String(valeur ?? '').trim();\nconst sansAccents = (valeur) => texte(valeur)\n  .normalize('NFD')\n  .replace(/[\\u0300-\\u036f]/g, '')\n  .toLocaleUpperCase('fr-FR');\nconst estSiren = (valeur) => /^\\d{9}$/.test(valeur);\nconst adressePublique = (etablissement) => {\n  if (texte(etablissement.adresse)) return texte(etablissement.adresse);\n  return [\n    etablissement.numero_voie,\n    etablissement.indice_rep,\n    etablissement.type_voie,\n    etablissement.libelle_voie,\n    etablissement.code_postal,\n    etablissement.libelle_commune\n  ].map(texte).filter(Boolean).join(' ');\n};\n\nfor (const entreprise of resultats) {\n  const siren = texte(entreprise.siren).replace(/\\D/g, '');\n  if (!estSiren(siren) || dejaVu.has(siren) || prospects.length >= 25) continue;\n\n  const etablissements = Array.isArray(entreprise.matching_etablissements)\n    ? entreprise.matching_etablissements\n    : [];\n  const auBonCodePostal = etablissements.filter((etablissement) =>\n    texte(etablissement.code_postal) === codePostal\n  );\n  // La ville ne sert que de préférence parmi les établissements déjà au bon code postal.\n  // Ainsi, le workflow ne déduit jamais la localisation depuis le siège de l’unité légale.\n  const dansVilleReference = auBonCodePostal.filter((etablissement) =>\n    sansAccents(etablissement.libelle_commune) === sansAccents(villeReference)\n  );\n  const etablissement = dansVilleReference[0] || auBonCodePostal[0];\n  if (!etablissement) continue;\n\n  dejaVu.add(siren);\n  prospects.push({\n    siren,\n    denomination: texte(entreprise.nom_complet || entreprise.nom_raison_sociale),\n    activite_principale: texte(entreprise.activite_principale),\n    etablissement_geographique: {\n      siret: texte(etablissement.siret),\n      code_postal: texte(etablissement.code_postal),\n      ville: texte(etablissement.libelle_commune),\n      adresse_publique: adressePublique(etablissement),\n      selection: 'matching_etablissements'\n    },\n    source: {\n      libelle: criteres.source_annuaire,\n      url: `https://annuaire-entreprises.data.gouv.fr/entreprise/${siren}`\n    },\n    limites: 'Données publiques uniquement ; pas d’e-mail, pas d’enrichissement réseau supplémentaire.'\n  });\n}\n\nreturn prospects.map((prospect) => ({ json: prospect }));"
+      },
+      "id": "9e4ba998-1e5a-4f15-a8cf-43341f661004",
+      "name": "Normaliser et limiter les prospects",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        180
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Déclencheur manuel": {
+      "main": [
+        [
+          {
+            "node": "Configurer les critères publics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurer les critères publics": {
+      "main": [
+        [
+          {
+            "node": "Rechercher dans l’API publique",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rechercher dans l’API publique": {
+      "main": [
+        [
+          {
+            "node": "Normaliser et limiter les prospects",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9e4ba998-1e5a-4f15-a8cf-43341f661000",
+  "tags": []
+}

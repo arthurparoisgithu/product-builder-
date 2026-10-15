@@ -1,0 +1,116 @@
+{
+  "name": "Réunion — actions et décisions à valider",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "62469759-8d67-42bd-af08-5f51bea0b001",
+      "name": "Déclencheur manuel",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -710,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Notes structurées, sans IA ni tâche réelle\n\nFormat attendu, une ligne par élément :\n\n- `ACTION | tâche | responsable | YYYY-MM-DD`\n- `DECISION | texte`\n\nLes notes initiales sont fictives. Le modèle extrait des **propositions** et les marque « prêt à valider » ou « à compléter ». Il ne crée aucune tâche dans un outil externe, n’appelle aucune IA et n’envoie rien.",
+        "height": 280,
+        "width": 400,
+        "color": 4
+      },
+      "id": "62469759-8d67-42bd-af08-5f51bea0b005",
+      "name": "Instructions n8n — notes structurées",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -130
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Jeu de données fictif, conçu pour documenter le format sans utiliser d’IA.\nconst reunionFictive = {\n  reunion_id: 'REU-EX-001',\n  titre: 'Réunion de démonstration — données fictives',\n  notes_fictives: [\n    'ACTION | Préparer le plan de test | Camille | 2026-11-15',\n    'DECISION | Le prototype reste hors production jusqu’à validation humaine.',\n    'ACTION | Centraliser les retours de test | Morgan | 2026-11-22'\n  ].join('\\n'),\n  format_documente: {\n    action: 'ACTION | tâche | responsable | YYYY-MM-DD',\n    decision: 'DECISION | texte'\n  },\n  avertissement: 'Exemple fictif : ne crée aucune tâche réelle.'\n};\n\nreturn [{ json: reunionFictive }];"
+      },
+      "id": "62469759-8d67-42bd-af08-5f51bea0b002",
+      "name": "Créer des notes fictives structurées",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -430,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Extraction déterministe : seules les lignes ACTION et DECISION sont interprétées.\nconst propositions = [];\n\nfor (const item of $input.all()) {\n  const source = item.json || {};\n  const lignes = String(source.notes_fictives || '').split(/\\r?\\n/);\n  for (const ligneBrute of lignes) {\n    const ligne = ligneBrute.trim();\n    if (!ligne) continue;\n    const morceaux = ligne.split('|').map((morceau) => morceau.trim());\n    const type = String(morceaux[0] || '').toLocaleUpperCase('fr-FR');\n\n    if (type === 'ACTION') {\n      propositions.push({\n        json: {\n          type: 'action',\n          reunion_id: source.reunion_id || null,\n          titre_reunion: source.titre || null,\n          tache: morceaux[1] || null,\n          responsable: morceaux[2] || null,\n          echeance: morceaux[3] || null,\n          ligne_source: ligne,\n          proposition_uniquement: true\n        }\n      });\n    } else if (type === 'DECISION') {\n      propositions.push({\n        json: {\n          type: 'decision',\n          reunion_id: source.reunion_id || null,\n          titre_reunion: source.titre || null,\n          texte: morceaux.slice(1).join(' | ') || null,\n          ligne_source: ligne,\n          proposition_uniquement: true\n        }\n      });\n    }\n  }\n}\n\nreturn propositions;"
+      },
+      "id": "62469759-8d67-42bd-af08-5f51bea0b003",
+      "name": "Extraire actions et décisions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -90,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Validation stricte avant toute validation humaine ; aucune intégration de tâches n’est appelée.\nconst estDateISOValide = (valeur) => {\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(String(valeur || ''))) return false;\n  const [annee, mois, jour] = valeur.split('-').map(Number);\n  const date = new Date(Date.UTC(annee, mois - 1, jour));\n  return date.getUTCFullYear() === annee\n    && date.getUTCMonth() === mois - 1\n    && date.getUTCDate() === jour;\n};\nconst estRenseigne = (valeur) => {\n  const texte = String(valeur || '').trim();\n  return Boolean(texte) && !['à définir', 'a definir', 'n/a', '-'].includes(texte.toLocaleLowerCase('fr-FR'));\n};\n\nreturn $input.all().map((item) => {\n  const proposition = item.json || {};\n  const manques = [];\n\n  if (proposition.type === 'action') {\n    if (!estRenseigne(proposition.tache)) manques.push('tâche');\n    if (!estRenseigne(proposition.responsable)) manques.push('responsable');\n    if (!estDateISOValide(proposition.echeance)) manques.push('échéance YYYY-MM-DD valide');\n  } else if (proposition.type === 'decision') {\n    if (!estRenseigne(proposition.texte)) manques.push('texte de la décision');\n  } else {\n    manques.push('type ACTION ou DECISION reconnu');\n  }\n\n  const pret = manques.length === 0;\n  return {\n    json: {\n      ...proposition,\n      etat_validation: pret ? 'prêt à valider' : 'à compléter',\n      champs_a_completer: manques,\n      action_suivante: pret\n        ? 'Validation humaine requise avant toute création de tâche.'\n        : 'Compléter les champs listés ; aucune tâche ne sera créée.',\n      creation_reelle: false\n    }\n  };\n});"
+      },
+      "id": "62469759-8d67-42bd-af08-5f51bea0b004",
+      "name": "Valider les propositions humaines",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        250,
+        220
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Déclencheur manuel": {
+      "main": [
+        [
+          {
+            "node": "Créer des notes fictives structurées",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer des notes fictives structurées": {
+      "main": [
+        [
+          {
+            "node": "Extraire actions et décisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraire actions et décisions": {
+      "main": [
+        [
+          {
+            "node": "Valider les propositions humaines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "62469759-8d67-42bd-af08-5f51bea0b000",
+  "tags": []
+}

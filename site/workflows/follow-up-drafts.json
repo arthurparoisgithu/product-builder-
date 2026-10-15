@@ -1,0 +1,116 @@
+{
+  "name": "Suivi — brouillons humains à valider",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "2c7b6151-ffbd-42d4-9cd5-2b405df7d001",
+      "name": "Déclencheur manuel",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Brouillons uniquement — aucun envoi\n\nLes opportunités de départ sont **entièrement fictives**. Après import, lancer manuellement et remplacer ce jeu de données par un connecteur adapté seulement après tests.\n\nLe filtre exclut systématiquement les refus, réponses, dossiers clôturés et oppositions. La sortie ne contient que des propositions de texte à relire et valider par une personne ; elle ne contacte personne.",
+        "height": 270,
+        "width": 405,
+        "color": 6
+      },
+      "id": "2c7b6151-ffbd-42d4-9cd5-2b405df7d005",
+      "name": "Instructions n8n — brouillons à valider",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -730,
+        -150
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Jeu de démonstration : ces opportunités n’existent pas et ne sont pas des contacts.\nconst auFormatISO = (decalageJours) => {\n  const date = new Date();\n  date.setUTCDate(date.getUTCDate() + decalageJours);\n  return date.toISOString().slice(0, 10);\n};\n\nconst opportunitesFictives = [\n  {\n    id: 'EX-SUIVI-001',\n    organisation_fictive: 'Atelier Atlas — exemple fictif',\n    statut: 'à relancer',\n    opposition: false,\n    echeance: auFormatISO(-1),\n    contexte: 'Demande de démonstration fictive à reformuler avant tout contact.'\n  },\n  {\n    id: 'EX-SUIVI-002',\n    organisation_fictive: 'Bureau Rivage — exemple fictif',\n    statut: 'refus',\n    opposition: true,\n    echeance: auFormatISO(-2),\n    contexte: 'Cas d’exclusion volontaire pour tester le filtre.'\n  },\n  {\n    id: 'EX-SUIVI-003',\n    organisation_fictive: 'Studio Boréal — exemple fictif',\n    statut: 'en attente',\n    opposition: false,\n    echeance: auFormatISO(7),\n    contexte: 'Échéance future : aucun brouillon ne doit être proposé maintenant.'\n  }\n];\n\nreturn opportunitesFictives.map((opportunite) => ({ json: opportunite }));"
+      },
+      "id": "2c7b6151-ffbd-42d4-9cd5-2b405df7d002",
+      "name": "Créer un échantillon fictif",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -440,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Le filtre conserve un état explicite pour audit, mais n’autorise un brouillon\n// que lorsque l’échéance est atteinte, la date valide et aucune exclusion applicable.\nconst statutsExclus = new Set(['refus', 'répondu', 'clôturé']);\nconst estDateISOValide = (valeur) => {\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(String(valeur || ''))) return false;\n  const [annee, mois, jour] = valeur.split('-').map(Number);\n  const date = new Date(Date.UTC(annee, mois - 1, jour));\n  return date.getUTCFullYear() === annee\n    && date.getUTCMonth() === mois - 1\n    && date.getUTCDate() === jour;\n};\nconst debutDuJourUTC = new Date();\ndebutDuJourUTC.setUTCHours(0, 0, 0, 0);\n\nreturn $input.all().map((item) => {\n  const opportunite = item.json || {};\n  const statut = String(opportunite.statut || '').trim().toLocaleLowerCase('fr-FR');\n  const dateValide = estDateISOValide(opportunite.echeance);\n  const echeance = dateValide ? new Date(`${opportunite.echeance}T00:00:00.000Z`) : null;\n  const opposition = opportunite.opposition === true;\n  const exclu = opposition || statutsExclus.has(statut);\n  const echeanceAtteinte = Boolean(echeance && echeance <= debutDuJourUTC);\n\n  let etat = 'planifiée';\n  let raison = 'Échéance future : aucune proposition de message.';\n  let brouillonAutorise = false;\n  if (exclu) {\n    etat = 'exclu';\n    raison = opposition ? 'Opposition enregistrée : ne pas préparer ni envoyer de suivi.' : `Statut exclu : ${statut}.`;\n  } else if (!dateValide) {\n    etat = 'à compléter';\n    raison = 'Date d’échéance absente ou invalide.';\n  } else if (echeanceAtteinte) {\n    etat = 'prêt à préparer';\n    raison = 'Échéance atteinte ; brouillon seulement, en attente de validation humaine.';\n    brouillonAutorise = true;\n  }\n\n  return {\n    json: {\n      ...opportunite,\n      controle_suivi: {\n        date_valide: dateValide,\n        echeance_atteinte: echeanceAtteinte,\n        opposition,\n        etat,\n        raison,\n        brouillon_autorise: brouillonAutorise\n      }\n    }\n  };\n});"
+      },
+      "id": "2c7b6151-ffbd-42d4-9cd5-2b405df7d003",
+      "name": "Filtrer échéances et exclusions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -110,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Aucun nœud de messagerie n’est présent : ces textes restent des propositions locales.\nreturn $input.all()\n  .filter((item) => item.json?.controle_suivi?.brouillon_autorise === true)\n  .map((item) => {\n    const opportunite = item.json;\n    const nom = String(opportunite.organisation_fictive || 'l’organisation').trim();\n    return {\n      json: {\n        id_source: opportunite.id || null,\n        organisation_fictive: nom,\n        etat: 'à valider humainement',\n        action: 'brouillon non envoyé',\n        canal: 'à définir après validation',\n        brouillon: `Bonjour,\\n\\nCeci est un brouillon de suivi à adapter pour ${nom}. Il est préparé à partir d’un jeu de données fictif et ne doit pas être envoyé sans validation humaine explicite.\\n\\nBien cordialement,`,\n        garde_fou: 'Aucun envoi, aucune modification CRM et aucune automatisation de relance.'\n      }\n    };\n  });"
+      },
+      "id": "2c7b6151-ffbd-42d4-9cd5-2b405df7d004",
+      "name": "Préparer les brouillons à valider",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        210,
+        200
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Déclencheur manuel": {
+      "main": [
+        [
+          {
+            "node": "Créer un échantillon fictif",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer un échantillon fictif": {
+      "main": [
+        [
+          {
+            "node": "Filtrer échéances et exclusions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrer échéances et exclusions": {
+      "main": [
+        [
+          {
+            "node": "Préparer les brouillons à valider",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2c7b6151-ffbd-42d4-9cd5-2b405df7d000",
+  "tags": []
+}
