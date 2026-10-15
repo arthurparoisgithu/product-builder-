@@ -45,3 +45,6 @@ Le dépôt GitHub désigné par l’utilisateur est `arthurparoisgithu/product-b
 La préparation du code ne vaut pas publication. GitHub Pages n’est pas activé par ce travail et aucune action de déploiement automatique n’est ajoutée. Pour une publication ultérieure, servir `site/` comme racine statique, ou utiliser l’entrée `index.html` du dépôt qui redirige vers `site/`. Confirmer le type de contrat recherché et les derniers textes personnels avant diffusion publique.
 
 Ne pas placer de clés API dans les fichiers du site ou dans GitHub. Une future connexion IA réelle devra passer par un service sécurisé côté serveur ; le site actuel n’en a pas besoin.
+
+## Vidéo de présentation
+`site/assets/video/promo-30s.mp4` (30 s, 16:9, avec son) est affichée sous le premier écran, avec son affiche `promo-poster.jpg`. Vidéo d’illustration générée avec l’IA ; les écrans montrés correspondent à ce dossier. Aucun gain chiffré n’y est revendiqué au-delà des hypothèses ajustables du site.
