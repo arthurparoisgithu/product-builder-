@@ -22,6 +22,16 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     page.locator('.skip').focus()
     page.keyboard.press('Enter')
     assert page.evaluate("document.activeElement.id") == 'main'
+    # Structure V2 : hero, services, preuves, démos, profil, contact
+    for section_id in ('accueil', 'services', 'realisations', 'demo', 'impact', 'profil', 'contact'):
+        assert page.locator(f'#{section_id}').count() == 1, section_id
+    assert 'Chef de Projet IA & No-Code' in page.locator('h1').inner_text()
+    assert 'RNCP 40677' in page.locator('#accueil').inner_text()
+    assert page.locator('.service-card').count() == 3
+    assert page.locator('#video').count() == 0
+    assert page.locator('a[href^="mailto:"]').count() >= 3
+    assert page.locator('svg use[href="#i-n8n"]').count() >= 1
+    assert page.evaluate("document.querySelector('#i-n8n path').getAttribute('d').length > 50")
     assert page.locator('#workflow-nodes li').count() == 5
     assert page.locator('#gain-hours').inner_text() == '15'
     page.locator('#tab-followup').click()
@@ -76,7 +86,7 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
             offending = page.evaluate("Array.from(document.querySelectorAll('body *')).filter(e => e.getBoundingClientRect().right > innerWidth+1).map(e => ({tag:e.tagName, cls:e.className, right:e.getBoundingClientRect().right})).slice(0,12)")
             raise AssertionError(f'Débordement à {width}px : {offending}')
     assert not errors, errors
-    for asset in ('/assets/n8n-workflow.jpg', '/assets/animapp.jpg', '/assets/kine.jpg', '/workflows/prospect-research.json', '/workflows/follow-up-drafts.json', '/workflows/meeting-actions.json', '/manus-routes.json'):
+    for asset in ('/assets/n8n-workflow.jpg', '/assets/animapp.jpg', '/assets/kine-site.jpg', '/workflows/prospect-research.json', '/workflows/follow-up-drafts.json', '/workflows/meeting-actions.json', '/manus-routes.json'):
         response = context.request.get(BASE + asset)
         assert response.status == 200, (asset, response.status)
     browser.close()

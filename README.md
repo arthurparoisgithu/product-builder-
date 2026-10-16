@@ -1,4 +1,4 @@
-# Arthur Parois — Product Builder
+# Arthur Parois — Chef de Projet IA & No-Code
 
 Portfolio entreprises en français, préparé pour `arthurparoisgithu/product-builder-`. Le dossier `new-repository` a été consulté en lecture seule : aucun de ses fichiers ni paramètres n’est modifié.
 
@@ -34,7 +34,7 @@ Les gains sont des projections configurables : `volume × (minutes manuelles −
 
 Les informations de parcours et les projets viennent du [dossier public d’Arthur](https://arthurparoisgithu.github.io/new-repository/). Le workflow d’audit est présenté comme une réalisation personnelle décrite dans ce dossier ; le rejeu source n’est pas une exécution réseau en direct. WebReset est explicitement personnel/fictif. Le site de kinésithérapie est une réalisation pour un proche ; aucun résultat de conversion n’est revendiqué. AnimApp est un projet personnel, distinct de la démo BriefOps créée ici.
 
-Les captures `n8n-workflow.jpg` et `animapp.jpg` ont été copiées depuis les assets du dossier public ; `kine.jpg` correspond à une photographie du cabinet, pas à une capture du site. La photo de portrait de l’ancien dossier n’est pas affichée pour ne pas utiliser un portrait qui n’est plus à jour. La typographie DM Sans / DM Serif Display est chargée depuis Google Fonts, avec des polices de secours locales. Les schémas et icônes sont rendus de façon déterministe en HTML/CSS/SVG.
+Les captures `n8n-workflow.jpg` et `animapp.jpg` ont été copiées depuis les assets du dossier public ; `kine-site.jpg` est une capture réelle de la page d’accueil du site du cabinet (l’ancienne photo `kine.jpg`, issue d’une banque d’images filigranée, n’est plus affichée). Aucune photo de portrait n’est affichée : un avatar stylisé « AP » la remplace en attendant une vraie photo. La typographie DM Sans / DM Serif Display est chargée depuis Google Fonts, avec des polices de secours locales. Les schémas et icônes sont rendus de façon déterministe en HTML/CSS/SVG. Les logos d’outils (n8n, Make, Airtable, Notion, Claude, GitHub) proviennent de Simple Icons (CC0) et sont intégrés en sprite SVG inline au début de `index.html`.
 
 La documentation officielle de l’[API Recherche d’entreprises](https://recherche-entreprises.api.gouv.fr/docs/) et du [nœud HTTP Request n8n](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.httprequest/) guide le modèle de prospection.
 
@@ -46,5 +46,14 @@ La préparation du code ne vaut pas publication. GitHub Pages n’est pas activ�
 
 Ne pas placer de clés API dans les fichiers du site ou dans GitHub. Une future connexion IA réelle devra passer par un service sécurisé côté serveur ; le site actuel n’en a pas besoin.
 
+## Structure du site (V2)
+
+1. **Hero** : nom, titre « Chef de Projet IA & No-Code », formation Oreegami (RNCP 40677, niveau 6), disponibilité en alternance dès 2027, CTA email + téléphone, carte de profil avec avatar et logos d’outils.
+2. **Ce que je fais** : trois cartes (automatiser, construire l’outil utile, traduire l’IA pour les équipes non techniques).
+3. **Preuves** : workflow n8n à quatre agents, BriefOps, site du cabinet de kiné, AnimApp ; puis les deux démos interactives (BriefOps et simulateurs n8n avec calcul de gain).
+4. **Profil** : parcours, formation Oreegami (chiffres communiqués par l’école), engagement au VLIPP, outils.
+5. **Contact** : bandeau CTA email + téléphone.
+
 ## Vidéo de présentation
-`site/assets/video/promo-30s.mp4` (30 s, 16:9, avec son) est affichée dans la dernière section du site, après le contact et avant le pied de page, avec son affiche `promo-poster.jpg`. Le lien « Vidéo » de la navigation mène à `#video`. La lecture n’est pas automatique : le lecteur conserve les contrôles, le son et le mode plein écran. Le serveur sert le type `video/mp4` et prend en charge les requêtes partielles pour naviguer dans la vidéo. Vidéo d’illustration générée avec l’IA ; les écrans montrés correspondent à ce dossier. Aucun gain chiffré n’y est revendiqué au-delà des hypothèses ajustables du site.
+
+La vidéo `site/assets/video/promo-30s.mp4` (générée avec l’IA) n’est plus affichée sur le site : le fichier reste dans le dépôt en attendant une vidéo face caméra d’Arthur. Pour l’intégrer, ajouter une section `<video>` dans `site/index.html`.

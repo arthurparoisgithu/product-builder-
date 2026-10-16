@@ -186,10 +186,13 @@ get('export-brief').addEventListener('click', () => {
 });
 resetBrief();
 
+// Les deux démos (#demo et #impact) partagent le lien « Démos » de la navigation.
+const navAlias = { impact:'demo' };
 const observer = new IntersectionObserver(entries => {
   for (const entry of entries) {
     if (!entry.isIntersecting) continue;
-    document.querySelectorAll('.header nav a').forEach(link => link.classList.toggle('current',link.hash === `#${entry.target.id}`));
+    const id = navAlias[entry.target.id] || entry.target.id;
+    document.querySelectorAll('.header nav a').forEach(link => link.classList.toggle('current',link.hash === `#${id}`));
   }
 },{rootMargin:'-20% 0px -60% 0px'});
-['profil','impact','realisations','demo'].forEach(id => observer.observe(get(id)));
+['services','realisations','demo','impact','profil','contact'].forEach(id => { const el = get(id); if (el) observer.observe(el); });
