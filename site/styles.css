@@ -278,3 +278,29 @@
 @media (max-width: 640px) {
   .process-steps { grid-template-columns: 1fr; }
 }
+
+/* Bouton secondaire sur fond clair (CV) */
+.button.ghost-dark{border-color:var(--ink);background:transparent;color:var(--ink);font-size:16px;font-weight:600;padding:17px 26px;border-radius:10px;gap:12px}
+.button.ghost-dark:hover{background:var(--ink);color:#fff}
+
+/* CTA après les workflows */
+.wf-cta{margin:40px auto 0;max-width:820px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px}
+.wf-cta>p{margin:0;font-size:20px;line-height:1.5;color:var(--ink);letter-spacing:-.02em}
+.wf-cta>p strong{color:var(--blue);font-weight:650}
+.wf-cta-actions{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+
+/* FAQ */
+.faq-section{padding-top:90px;padding-bottom:90px}
+.faq-list{max-width:860px;display:grid;gap:12px}
+.faq-item{background:var(--card);border:1px solid var(--line);border-radius:12px;transition:border-color .2s}
+.faq-item[open]{border-color:#b9c3ff}
+.faq-item summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';flex-shrink:0;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#e6eaff;color:var(--blue);font-size:20px;font-weight:500;line-height:1;transition:transform .2s}
+.faq-item[open] summary::after{transform:rotate(45deg)}
+.faq-item summary:hover{color:var(--blue)}
+.faq-item summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:12px}
+.faq-answer{padding:0 24px 22px}
+.faq-answer p{margin:0;font-size:15.5px;line-height:1.75}
+
+@media(max-width:560px){.button.ghost-dark{width:100%}.wf-cta{padding:26px 20px}.wf-cta>p{font-size:18px}.wf-cta-actions .button{width:100%}.faq-section{padding-top:56px;padding-bottom:56px}.faq-item summary{padding:16px 18px;font-size:16px}.faq-answer{padding:0 18px 18px}.faq-answer p{font-size:15px}}
