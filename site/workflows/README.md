@@ -21,6 +21,16 @@ Aucune automatisation de production n’est active dans ces modèles.
 | `follow-up-drafts.json` | Préparer des brouillons de suivi | Utilise exclusivement un dataset fictif. Les refus, réponses, dossiers clôturés et oppositions sont exclus ; la sortie est un brouillon à valider, jamais envoyé. |
 | `meeting-actions.json` | Préparer des propositions d’actions et de décisions | Utilise exclusivement des notes fictives structurées. Aucune IA en direct et aucune tâche réelle ne sont créées. Les champs manquants sont marqués **à compléter**. |
 
+## Modèles liés aux cartes du site
+
+Ce sont des modèles à importer. Ils sont inactifs et sans identifiants. Les identifiants Airtable, Notion et Google Agenda, les canaux Slack et l’URL d’annuaire sont des valeurs à remplacer. Chaque modèle se termine par un point de validation humaine.
+
+| Fichier | Carte | Enchaînement |
+|---|---|---|
+| `devis-entrant.json` | Un devis arrive par email | Webhook → extraction nom/besoin/budget/délai → fiche Airtable → accusé de réception → alerte Slack → validation commerciale avant réponse |
+| `onboarding-collaborateur.json` | Un collaborateur arrive lundi | Formulaire RH → création des accès (HTTP, à configurer) → email de bienvenue → checklist Notion → invitations Google Agenda → récapitulatif manager 48 h avant l’arrivée |
+| `avis-google.json` | Un avis négatif arrive | Webhook → note < 3 ? → alerte Slack + email (avis négatif) → brouillon de réponse → journal Airtable → publication par le responsable uniquement |
+
 ## Adaptation après tests
 
 - Adapter les critères du modèle de prospection avant chaque lancement manuel.

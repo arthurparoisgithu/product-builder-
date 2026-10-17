@@ -1,0 +1,246 @@
+{
+  "name": "Avis Google — Veille et alertes automatiques",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "avis-google",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "48114145-9b97-4be8-abf3-a46262390634",
+      "name": "Nouvel avis reçu",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "Reçoit un avis (rating, author, comment, createTime, reviewId) depuis votre outil de veille ou un script appelant l'API Google Business Profile.",
+      "notesInFlow": true,
+      "webhookId": "5cb14a3c-c37f-4627-b95d-df4773a7be5b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c8f857a4-68c7-4c94-bfab-b9e5a0a8dc2e",
+              "leftValue": "={{ Number($json.body ? $json.body.rating : $json.rating) }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "48f8d55a-20f7-4a95-8163-2f6bf1a8fe51",
+      "name": "Note inférieure à 3 ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#avis-clients"
+        },
+        "text": "=Avis négatif reçu ({{ $json.body ? $json.body.rating : $json.rating }}★)\n« {{ $json.body ? $json.body.comment : $json.comment }} »\nUn brouillon de réponse est en préparation.",
+        "otherOptions": {}
+      },
+      "id": "5e159f9e-13fe-4803-80ce-1523d2047da9",
+      "name": "Alerte urgente Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "alertes@votre-entreprise.fr",
+        "toEmail": "responsable@votre-entreprise.fr",
+        "subject": "=Avis négatif à traiter ({{ $(\"Nouvel avis reçu\").item.json.body ? $(\"Nouvel avis reçu\").item.json.body.rating : $(\"Nouvel avis reçu\").item.json.rating }}★)",
+        "emailFormat": "text",
+        "text": "=Un avis négatif vient d'arriver. Le brouillon de réponse est enregistré dans Airtable, à relire avant publication.",
+        "options": {}
+      },
+      "id": "504c8d4b-9efc-4f32-8503-ab3515ef315a",
+      "name": "Alerte urgente email responsable",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        750,
+        150
+      ],
+      "notes": "Pour un SMS, remplacer ou compléter par un nœud Twilio.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Prépare un brouillon de réponse selon la note. Rien n'est publié automatiquement.\nconst avis = $('Nouvel avis reçu').all();\nreturn avis.map((item) => {\n  const a = item.json.body ?? item.json;\n  const note = Number(a.rating);\n  const auteur = String(a.author ?? '').trim();\n  const salutation = auteur ? `Bonjour ${auteur},` : 'Bonjour,';\n  let brouillon;\n  if (note < 3) {\n    brouillon = `${salutation}\\n\\nMerci d'avoir pris le temps de partager votre expérience. Nous sommes désolés qu'elle n'ait pas été à la hauteur. Pouvez-vous nous contacter directement pour que nous comprenions ce qui s'est passé ?`;\n  } else if (note >= 4) {\n    brouillon = `${salutation}\\n\\nMerci beaucoup pour votre avis, cela fait plaisir à toute l'équipe. Au plaisir de vous revoir !`;\n  } else {\n    brouillon = `${salutation}\\n\\nMerci pour votre retour. Nous prenons note de vos remarques pour nous améliorer.`;\n  }\n  return {\n    json: {\n      reviewId: String(a.reviewId ?? ''),\n      auteur,\n      note: Number.isFinite(note) ? note : null,\n      texte: String(a.comment ?? ''),\n      date: String(a.createTime ?? new Date().toISOString()),\n      urgent: note < 3,\n      brouillon,\n      statut: 'Brouillon à valider',\n    },\n  };\n});"
+      },
+      "id": "92f70540-df97-4624-84fe-aeb10baa3f8d",
+      "name": "Préparer le brouillon de réponse",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        300
+      ],
+      "notes": "Brouillon adapté à la note. Jamais publié automatiquement.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appVotreBaseAvis"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblAvisGoogle"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Auteur": "={{ $json.auteur }}",
+            "Note": "={{ $json.note }}",
+            "Avis": "={{ $json.texte }}",
+            "Brouillon": "={{ $json.brouillon }}",
+            "Statut": "={{ $json.statut }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "43cd0dce-1f96-4579-ae5a-f76f864c2d29",
+      "name": "Enregistrer dans Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1250,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "b24ed72f-c097-4547-9557-d97a6b33320c",
+      "name": "Publication par le responsable uniquement",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        300
+      ],
+      "notes": "Point de contrôle humain : le responsable relit, ajuste et publie la réponse lui-même.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Nouvel avis reçu": {
+      "main": [
+        [
+          {
+            "node": "Note inférieure à 3 ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Note inférieure à 3 ?": {
+      "main": [
+        [
+          {
+            "node": "Alerte urgente Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Préparer le brouillon de réponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alerte urgente Slack": {
+      "main": [
+        [
+          {
+            "node": "Alerte urgente email responsable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alerte urgente email responsable": {
+      "main": [
+        [
+          {
+            "node": "Préparer le brouillon de réponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer le brouillon de réponse": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer dans Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enregistrer dans Airtable": {
+      "main": [
+        [
+          {
+            "node": "Publication par le responsable uniquement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

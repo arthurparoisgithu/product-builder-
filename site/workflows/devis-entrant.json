@@ -1,0 +1,202 @@
+{
+  "name": "Devis entrant — Traitement automatique",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "devis-entrant",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "dc1dc3c1-867d-4717-9a6c-739447ab203d",
+      "name": "Demande de devis reçue",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "Recevoir l'email (via un service de transfert email → webhook) ou le formulaire du site.",
+      "notesInFlow": true,
+      "webhookId": "bb37cd86-c191-40c2-8703-c0d6253e03f0"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "// Extraction des informations d'une demande de devis.\n// Accepte un formulaire (champs nommés) ou un email brut (champ \"text\").\n// Règle : une information absente reste vide et part dans \"aClarifier\" — rien n'est inventé.\nconst resultats = [];\nfor (const item of $input.all()) {\n  const corps = item.json.body ?? item.json;\n  const texte = String(corps.text ?? corps.message ?? '');\n\n  const chercher = (regex) => {\n    const m = texte.match(regex);\n    return m ? m[1].trim() : '';\n  };\n\n  const nom = String(corps.nom ?? corps.name ?? '').trim() || chercher(/(?:je m'appelle|nom\\s*:)\\s*([^\\n,.]+)/i);\n  const email = String(corps.email ?? corps.from ?? '').trim() || chercher(/([\\w.+-]+@[\\w-]+\\.[\\w.]+)/);\n  const besoin = String(corps.besoin ?? '').trim() || texte.split('\\n').find((l) => l.trim()) || '';\n  const budget = String(corps.budget ?? '').trim() || chercher(/(\\d[\\d\\s.,]*\\s?(?:€|euros?|k€))/i);\n  const delai = String(corps.delai ?? '').trim() || chercher(/d[ée]lai\\s*:?\\s*([^\\n,.]{2,40})/i) || chercher(/((?:avant|d'ici|sous|pour)\\s+(?:le\\s+)?[^\\n,.]{3,40})/i);\n\n  const champs = { nom, email, besoin, budget, delai };\n  const aClarifier = Object.entries(champs).filter(([, v]) => !v).map(([k]) => k);\n\n  resultats.push({\n    json: {\n      ...champs,\n      aClarifier: aClarifier.join(', '),\n      complet: aClarifier.length === 0,\n      recuLe: new Date().toISOString(),\n      statut: 'À qualifier',\n    },\n  });\n}\nreturn resultats;"
+      },
+      "id": "54ebe249-84f2-4480-989f-a1a2ec4d3bf4",
+      "name": "Extraire nom, besoin, budget, délai",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ],
+      "notes": "Champs absents laissés vides et listés dans « aClarifier ».",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appVotreBaseCRM"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblDemandesDevis"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nom": "={{ $json.nom }}",
+            "Email": "={{ $json.email }}",
+            "Besoin": "={{ $json.besoin }}",
+            "Budget": "={{ $json.budget }}",
+            "Délai": "={{ $json.delai }}",
+            "À clarifier": "={{ $json.aClarifier }}",
+            "Statut": "={{ $json.statut }}",
+            "Reçu le": "={{ $json.recuLe }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "1452b87d-0982-4c33-a697-ee5f043f151a",
+      "name": "Créer la fiche CRM",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        300
+      ],
+      "notes": "Remplacer la base et la table par les vôtres, puis associer vos identifiants Airtable.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "contact@votre-entreprise.fr",
+        "toEmail": "={{ $('Extraire nom, besoin, budget, délai').item.json.email }}",
+        "subject": "Votre demande de devis a bien été reçue",
+        "emailFormat": "text",
+        "text": "=Bonjour {{ $('Extraire nom, besoin, budget, délai').item.json.nom || '' }},\n\nVotre demande a bien été reçue. Nous revenons vers vous sous 24 h.\n\nCordialement,\nL'équipe commerciale",
+        "options": {}
+      },
+      "id": "afd1ec22-89aa-4280-9460-7b0554c09c3f",
+      "name": "Accusé de réception au prospect",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        750,
+        300
+      ],
+      "notes": "Message neutre : il confirme la réception, sans engagement sur le devis.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#commercial"
+        },
+        "text": "=Nouvelle demande de devis\n• Contact : {{ $('Extraire nom, besoin, budget, délai').item.json.nom || 'non précisé' }}\n• Besoin : {{ $('Extraire nom, besoin, budget, délai').item.json.besoin || 'non précisé' }}\n• Budget : {{ $('Extraire nom, besoin, budget, délai').item.json.budget || 'non précisé' }}\n• Délai : {{ $('Extraire nom, besoin, budget, délai').item.json.delai || 'non précisé' }}\n• À clarifier : {{ $('Extraire nom, besoin, budget, délai').item.json.aClarifier || 'rien' }}",
+        "otherOptions": {}
+      },
+      "id": "16c7f24e-1dcb-48f1-a657-39646cdb4f20",
+      "name": "Alerter l'équipe commerciale",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        300
+      ],
+      "notes": "Résumé + points à clarifier, envoyé dans le canal commercial.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {},
+      "id": "e288db22-6e27-4aaf-9258-c59f74fe4bd5",
+      "name": "Validation commerciale avant réponse",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ],
+      "notes": "Point de contrôle humain : le commercial ouvre la fiche, qualifie et répond lui-même.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Demande de devis reçue": {
+      "main": [
+        [
+          {
+            "node": "Extraire nom, besoin, budget, délai",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraire nom, besoin, budget, délai": {
+      "main": [
+        [
+          {
+            "node": "Créer la fiche CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer la fiche CRM": {
+      "main": [
+        [
+          {
+            "node": "Accusé de réception au prospect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accusé de réception au prospect": {
+      "main": [
+        [
+          {
+            "node": "Alerter l'équipe commerciale",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alerter l'équipe commerciale": {
+      "main": [
+        [
+          {
+            "node": "Validation commerciale avant réponse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

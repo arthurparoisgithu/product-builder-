@@ -1,0 +1,245 @@
+{
+  "name": "Onboarding collaborateur — Automatisation RH",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Arrivée d'un nouveau collaborateur",
+        "formDescription": "À remplir par les RH une fois l'arrivée confirmée.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Prénom",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Nom",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email personnel",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Poste",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email du manager",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Date de début",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Outils à ouvrir",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4f7a8119-2d26-4746-ba6b-0e0aa3c2b0f9",
+      "name": "Formulaire RH : arrivée validée",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "294c15cf-c8dd-4a92-a224-65785a8398fc"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.votre-annuaire.example/provisioning",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prenom\": \"{{ $json['Prénom'] }}\",\n  \"nom\": \"{{ $json['Nom'] }}\",\n  \"poste\": \"{{ $json['Poste'] }}\",\n  \"outils\": \"{{ $json['Outils à ouvrir'] }}\"\n}",
+        "options": {}
+      },
+      "id": "bebff5db-79e0-4d41-972b-7e1eeb638e81",
+      "name": "Créer les accès (à brancher)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        250,
+        300
+      ],
+      "notes": "Emplacement réservé : remplacer l'URL par l'API de votre annuaire (Google Workspace, Microsoft 365…) ou par les nœuds dédiés.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "rh@votre-entreprise.fr",
+        "toEmail": "={{ $('Formulaire RH : arrivée validée').item.json['Email personnel'] }}",
+        "subject": "=Bienvenue {{ $('Formulaire RH : arrivée validée').item.json['Prénom'] }} !",
+        "emailFormat": "text",
+        "text": "=Bonjour {{ $('Formulaire RH : arrivée validée').item.json['Prénom'] }},\n\nNous sommes ravis de vous accueillir le {{ $('Formulaire RH : arrivée validée').item.json['Date de début'] }} en tant que {{ $('Formulaire RH : arrivée validée').item.json['Poste'] }}.\n\nVos accès et le programme de votre première semaine vous seront remis par votre manager.\n\nÀ très vite,\nL'équipe RH",
+        "options": {}
+      },
+      "id": "cea7ad0d-c375-4b38-9696-6b341440c144",
+      "name": "Email de bienvenue",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        500,
+        300
+      ],
+      "notes": "Ne jamais envoyer de mot de passe par email : transmettre les accès par un canal sécurisé.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "votre-base-onboarding"
+        },
+        "title": "=Onboarding — {{ $('Formulaire RH : arrivée validée').item.json['Prénom'] }} {{ $('Formulaire RH : arrivée validée').item.json['Nom'] }}",
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "to_do",
+              "textContent": "Présenter l'équipe"
+            },
+            {
+              "type": "to_do",
+              "textContent": "Préparer le poste et le matériel"
+            },
+            {
+              "type": "to_do",
+              "textContent": "Vérifier les accès créés"
+            },
+            {
+              "type": "to_do",
+              "textContent": "Planifier le point de fin de première semaine"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fda98cd3-bc7c-45ef-b19a-11ee8ed422d3",
+      "name": "Checklist manager (Notion)",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        750,
+        300
+      ],
+      "notes": "Remplacer par l'identifiant de votre base Notion « Onboarding ».",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "primary"
+        },
+        "start": "={{ $('Formulaire RH : arrivée validée').item.json['Date de début'] }}T09:30:00",
+        "end": "={{ $('Formulaire RH : arrivée validée').item.json['Date de début'] }}T10:30:00",
+        "additionalFields": {
+          "summary": "=Accueil de {{ $('Formulaire RH : arrivée validée').item.json['Prénom'] }}",
+          "attendees": [
+            "={{ $('Formulaire RH : arrivée validée').item.json['Email du manager'] }}"
+          ]
+        }
+      },
+      "id": "520ac7d4-9c58-4558-b1ab-9cd3b97af2ef",
+      "name": "Invitations agenda",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1000,
+        300
+      ],
+      "notes": "Réunion d'accueil le premier jour ; dupliquer le nœud pour le café manager et la réunion d'équipe.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {},
+      "id": "42932fd3-353d-461e-961c-ee040614026d",
+      "name": "Récapitulatif manager 48 h avant l'arrivée",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ],
+      "notes": "Point de contrôle humain : le manager vérifie et ajuste. L'outil prépare, l'humain accueille.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Formulaire RH : arrivée validée": {
+      "main": [
+        [
+          {
+            "node": "Créer les accès (à brancher)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer les accès (à brancher)": {
+      "main": [
+        [
+          {
+            "node": "Email de bienvenue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email de bienvenue": {
+      "main": [
+        [
+          {
+            "node": "Checklist manager (Notion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checklist manager (Notion)": {
+      "main": [
+        [
+          {
+            "node": "Invitations agenda",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invitations agenda": {
+      "main": [
+        [
+          {
+            "node": "Récapitulatif manager 48 h avant l'arrivée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
