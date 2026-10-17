@@ -15,7 +15,7 @@
 <a class="skip" href="#main">Aller au contenu</a>
 <header class="header">
   <a class="brand" href="#accueil" aria-label="Arthur Parois, accueil"><span class="monogram">ap<span>↗</span></span><span>Arthur Parois<small>CHEF DE PROJET IA & NO-CODE</small></span></a>
-  <nav aria-label="Navigation principale"><a href="#services">Ce que je fais</a><a href="#realisations">Projets</a><a href="#demo">Démos</a><a href="#profil">Profil</a><a href="#contact">Contact</a></nav>
+  <nav aria-label="Navigation principale"><a href="#services">Ce que je fais</a><a href="#realisations">Projets</a><a href="#workflows">Workflows</a><a href="#profil">Profil</a><a href="#contact">Contact</a></nav>
   <a class="button primary header-cta" href="mailto:arthur270.parois@gmail.com">Parlons de votre besoin <span aria-hidden="true">↗</span></a>
 </header>
 <main id="main" tabindex="-1">
@@ -107,12 +107,11 @@
       <article class="project-card">
         <div class="card-preview brief-preview" aria-hidden="true">
           <div class="bp-window"><span class="bp-bar"><i></i><i></i><i></i></span><p class="bp-msg">« On voudrait mettre un peu d’IA dans l’entreprise… »</p><span class="bp-arrow">↓</span><ul><li><b>Objectif</b> identifier un premier besoin</li><li class="bp-missing"><b>À clarifier</b> budget, délai, utilisateurs</li></ul></div>
-          <span>DÉMO INTERACTIVE · À TESTER SUR CETTE PAGE</span>
+          <span>APERÇU DU PRINCIPE</span>
         </div>
         <div class="project-meta"><span>APPLICATION · CADRAGE PROJET</span><span>PROJET PERSONNEL</span></div>
         <h3>BriefOps : d’une demande floue à un brief clair.</h3>
         <p>BriefOps transforme une demande vague en brief structuré : objectif, livrables, budget, délai — et surtout la liste de ce qui manque encore. Rien n’est inventé, et c’est une personne qui valide avant l’export.</p>
-        <a class="button primary" href="#demo">Tester BriefOps maintenant <span aria-hidden="true">↓</span></a>
       </article>
       <article class="project-card">
         <div class="card-preview kine-preview"><img src="./assets/kine-site.jpg" alt="Capture réelle de la page d’accueil du site du cabinet de kinésithérapie" loading="lazy" width="1440" height="810"><span>CAPTURE RÉELLE DU SITE EN LIGNE</span></div>
@@ -130,26 +129,97 @@
     </div>
   </section>
 
-  <!-- 3 bis. DÉMOS À TESTER -->
-  <section class="demo" id="demo" aria-labelledby="demo-title"><div class="section-wrap"><p class="kicker">À tester · BriefOps</p><div class="section-heading"><h2 id="demo-title">Une demande floue.<br><span class="serif">Un brief qui avance.</span></h2><p>Choisissez une demande, structurez-la, corrigez ce qui ne va pas, puis validez. C’est ma façon de cadrer un projet : rendre visible ce qui manque plutôt que de l’inventer.</p></div><div class="demo-disclaimer"><span class="dot"></span> DÉMONSTRATION SANS IA EN DIRECT <span>Exemples fictifs et extraction prédéfinie. Modification, validation et export fonctionnent réellement.</span></div>
-    <div class="brief-app"><div class="brief-sidebar"><div class="brief-brand"><span class="brief-icon">b↗</span> BriefOps <small>DÉMO</small></div><p class="mini-title">LA DEMANDE</p><label for="brief-example" class="sr-only">Choisir une demande fictive</label><select id="brief-example"><option value="website">Un site pour un cabinet</option><option value="automation">Des demandes à centraliser</option><option value="incomplete">Une demande très incomplète</option></select><div class="request-paper"><span>MESSAGE REÇU · FICTIF</span><p id="brief-request"></p><small>Les informations absentes ne sont pas inventées.</small></div><button class="button primary" id="structure-brief">Structurer cette demande <span aria-hidden="true">→</span></button><p class="sidebar-foot">Pas d’envoi. Pas de collecte.<br>Tout reste dans cette session du navigateur.</p></div><div class="brief-editor"><div class="editor-top"><span class="mini-title">LE BRIEF</span><span class="status-pill" id="brief-state">À structurer</span></div><div id="brief-empty" class="brief-empty"><span>↳</span><h3>De l’intention<br>à l’information utile.</h3><p>Choisissez une demande, puis structurez-la.<br>Vous pourrez relire et corriger chaque champ.</p></div><form id="brief-form" hidden><div class="field full"><label for="brief-objective">Objectif <span>*</span></label><input id="brief-objective" name="objective" required maxlength="300"></div><div class="field full"><label for="brief-deliverables">Livrables envisagés <span>*</span></label><textarea id="brief-deliverables" name="deliverables" required rows="2" maxlength="1000"></textarea></div><div class="field"><label for="brief-budget">Budget évoqué</label><input id="brief-budget" name="budget" placeholder="Non précisé" maxlength="100"></div><div class="field"><label for="brief-deadline">Échéance évoquée</label><input id="brief-deadline" name="deadline" placeholder="Non précisée" maxlength="100"></div><div class="field full"><label for="brief-constraints">Contraintes connues</label><textarea id="brief-constraints" name="constraints" rows="2" placeholder="À compléter" maxlength="1000"></textarea></div><div class="missing-fields"><strong>À clarifier avant de construire</strong><ul id="brief-questions"></ul></div><label class="human-approval"><input type="checkbox" id="brief-approval" required> J’ai relu et je valide cette version du brief.</label><div class="editor-actions"><button class="button primary" type="submit">Valider le brief <span aria-hidden="true">✓</span></button><button class="button secondary" id="export-brief" type="button" disabled>Exporter en Markdown <span aria-hidden="true">↓</span></button></div></form><p id="brief-feedback" role="status"></p></div></div>
-    <div class="product-principles"><div><strong>Les inconnues restent visibles.</strong><p>Un champ absent devient une question, pas une réponse inventée.</p></div><div><strong>La validation est une vraie étape.</strong><p>Modifier un brief annule sa validation. L’export est verrouillé jusqu’à relecture.</p></div><div><strong>L’outil sert le processus.</strong><p>Une interface sobre, un périmètre clair, une sortie réutilisable.</p></div></div>
-  </div></section>
-
-  <section class="impact" id="impact" aria-labelledby="impact-title">
-    <div class="section-wrap"><p class="kicker">À tester · Automatisations n8n</p><div class="section-heading"><h2 id="impact-title">Combien de temps<br><span class="serif">votre équipe pourrait récupérer ?</span></h2><p>Trois tâches courantes, trois modèles n8n téléchargeables. Lancez la simulation, puis ajustez les hypothèses à votre réalité : le calcul se met à jour.</p></div>
-      <div class="workflow-tabs" role="tablist" aria-label="Choisir un workflow"><button id="tab-prospect" role="tab" aria-selected="true" aria-controls="workflow-panel" data-workflow="prospect">Trouver des prospects <span class="tab-arrow">↗</span></button><button id="tab-followup" role="tab" aria-selected="false" aria-controls="workflow-panel" tabindex="-1" data-workflow="followup">Préparer les relances <span class="tab-arrow">↗</span></button><button id="tab-meeting" role="tab" aria-selected="false" aria-controls="workflow-panel" tabindex="-1" data-workflow="meeting">Passer aux actions <span class="tab-arrow">↗</span></button></div>
-      <div id="workflow-panel" class="workflow-panel" role="tabpanel" aria-labelledby="tab-prospect">
-        <div class="workflow-summary"><div><p id="workflow-kicker" class="eyebrow"></p><h3 id="workflow-title"></h3><p id="workflow-description"></p></div><span class="badge">MODÈLE PROPOSÉ · n8n</span></div>
-        <div class="process-toolbar"><span class="process-label">LE PROCESSUS <span class="quiet">/ 5 ÉTAPES</span></span><button id="play-workflow" class="button small"><span aria-hidden="true">▶</span> Simuler le workflow</button></div>
-        <ol id="workflow-nodes" class="workflow-nodes"></ol>
-        <div class="workflow-live"><p id="workflow-status" role="status">Simulation illustrative : aucune connexion externe ni envoi de message.</p><span id="workflow-progress">0 / 5</span></div>
-        <div class="workflow-detail"><div><p class="mini-title">AVANT</p><p id="workflow-before"></p></div><div><p class="mini-title blue">APRÈS</p><p id="workflow-after"></p></div><div class="human-rule"><p class="mini-title">LE POINT DE CONTRÔLE</p><p id="workflow-human"></p></div></div>
-        <div class="gain-area"><div class="gain-heading"><span class="mini-title">LE GAIN POTENTIEL</span><h4>Pas une promesse.<br>Un calcul à explorer.</h4><p>Une estimation de temps opérationnel, à mesurer pendant un pilote.</p></div><div class="gain-controls"><label for="gain-volume">Éléments traités / mois <output id="volume-output" for="gain-volume"></output></label><input id="gain-volume" type="range" min="0" max="500" step="1" value="100"><div class="time-inputs"><label>Temps manuel / élément <span><input id="gain-before" type="number" min="0" max="240" step="0.5" value="12" inputmode="decimal"> min</span></label><label>Temps avec l’outil / élément <span><input id="gain-after" type="number" min="0" max="240" step="0.5" value="3" inputmode="decimal"> min</span></label></div><p id="gain-formula" class="formula"></p></div><div class="gain-result" aria-live="polite"><span id="gain-hours"></span><strong id="gain-unit">heures / mois</strong><small id="gain-caption"></small><div class="gain-bars"><span>Manuel</span><i class="before-bar"></i><span>Avec l’outil</span><i id="after-bar"></i></div></div></div>
-        <p id="gain-assumptions" class="assumptions"></p>
-        <div class="workflow-download"><a id="workflow-download" class="text-link" href="./workflows/prospect-research.json" download>Télécharger le modèle n8n <span aria-hidden="true">↓</span></a><a href="./workflows/README.md" target="_blank" rel="noopener">Lire le guide de configuration ↗</a><small>Modèles à configurer et tester dans votre instance. Pas de workflow actif.</small></div>
-      </div>
+  <!-- WORKFLOWS CONCRETS -->
+  <section class="section-wrap wf-section" id="workflows" aria-labelledby="wf-title">
+    <p class="kicker">Workflows concrets</p>
+    <div class="section-heading">
+      <h2 id="wf-title">Trois problèmes réels.<br><span class="serif">Trois solutions qui tournent.</span></h2>
+      <p>Ce ne sont pas des captures d'écran. Ce sont trois scénarios d'automatisation construits pas à pas, pour des métiers différents. Chaque étape correspond à un nœud réel dans un outil comme n8n ou Make.</p>
     </div>
+
+    <div class="wf-grid">
+
+      <!-- WORKFLOW 1 : DEVIS ENTRANT -->
+      <article class="wf-card" aria-label="Workflow : traitement d'un devis entrant">
+        <header class="wf-header">
+          <span class="wf-industry">Agences · Prestataires · Artisans</span>
+          <h3>Un devis arrive par email.<br>L'équipe est prévenue en 30 secondes.</h3>
+          <p class="wf-problem">Avant : 20 minutes de saisie manuelle par demande, des oublis, des devis perdus dans la boîte mail.</p>
+        </header>
+        <ol class="wf-steps" aria-label="Étapes du workflow">
+          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📥</span><div><strong>Déclenchement</strong><span>Un email ou un formulaire web arrive avec une demande de devis.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🔍</span><div><strong>Extraction automatique</strong><span>n8n lit le message et identifie : nom du contact, besoin exprimé, budget mentionné, délai souhaité.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🗂️</span><div><strong>Création de fiche CRM</strong><span>Une fiche est créée dans Airtable avec toutes les informations extraites. Rien à ressaisir.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">✉️</span><div><strong>Accusé de réception</strong><span>Un email de confirmation part automatiquement au prospect : « Votre demande a bien été reçue, nous revenons vers vous sous 24h. »</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🔔</span><div><strong>Alerte interne</strong><span>Un message Slack est envoyé à l'équipe commerciale avec le résumé du devis et un lien direct vers la fiche.</span></div></li>
+          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le commercial ouvre la fiche, vérifie, qualifie, puis répond. L'outil prépare, l'humain décide.</span></div></li>
+        </ol>
+        <footer class="wf-footer">
+          <div class="wf-result"><span class="result-label">Après</span><span>2 minutes pour relire et répondre, contre 20 minutes avant. Aucun devis oublié.</span></div>
+          <ul class="wf-tools" aria-label="Outils utilisés">
+            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
+            <li><svg class="logo" style="color:#18BFFF" aria-hidden="true"><use href="#i-airtable"/></svg>Airtable</li>
+            <li><span class="logo-text" aria-hidden="true">✉</span>Email</li>
+            <li><span class="logo-text" aria-hidden="true">💬</span>Slack</li>
+          </ul>
+        </footer>
+      </article>
+
+      <!-- WORKFLOW 2 : ONBOARDING COLLABORATEUR -->
+      <article class="wf-card" aria-label="Workflow : onboarding d'un nouveau collaborateur">
+        <header class="wf-header">
+          <span class="wf-industry">PME · Startups · Cabinets</span>
+          <h3>Un collaborateur arrive lundi.<br>Tout est prêt le vendredi.</h3>
+          <p class="wf-problem">Avant : 45 minutes de configuration manuelle par arrivée, des accès oubliés, un manager débordé le jour J.</p>
+        </header>
+        <ol class="wf-steps" aria-label="Étapes du workflow">
+          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📋</span><div><strong>Déclenchement</strong><span>Le RH valide le formulaire d'arrivée : nom, poste, date de début, outils à créer.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">👤</span><div><strong>Création des accès</strong><span>Les comptes sont créés ou provisionnés : email professionnel, accès Slack, espace Notion de l'équipe.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">📩</span><div><strong>Email de bienvenue</strong><span>Un email est envoyé au nouveau collaborateur avec ses identifiants, les liens utiles et le programme de sa première semaine.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">📝</span><div><strong>Checklist manager</strong><span>Une liste de tâches est créée automatiquement dans Notion pour le N+1 : présentation équipe, accès matériel, points à planifier.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">📅</span><div><strong>Invitations agenda</strong><span>Les réunions de démarrage (accueil RH, café manager, réunion d'équipe) sont créées et envoyées automatiquement.</span></div></li>
+          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le manager reçoit un récap 48h avant l'arrivée : il vérifie, ajuste, et accueille. L'outil prépare, l'humain accueille.</span></div></li>
+        </ol>
+        <footer class="wf-footer">
+          <div class="wf-result"><span class="result-label">Après</span><span>5 minutes de vérification. Plus d'accès oublié, plus de manager débordé le lundi matin.</span></div>
+          <ul class="wf-tools" aria-label="Outils utilisés">
+            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
+            <li><svg class="logo" style="color:#111" aria-hidden="true"><use href="#i-notion"/></svg>Notion</li>
+            <li><span class="logo-text" aria-hidden="true">📅</span>Agenda</li>
+            <li><span class="logo-text" aria-hidden="true">💬</span>Slack</li>
+          </ul>
+        </footer>
+      </article>
+
+      <!-- WORKFLOW 3 : AVIS GOOGLE -->
+      <article class="wf-card" aria-label="Workflow : gestion des avis Google">
+        <header class="wf-header">
+          <span class="wf-industry">Restaurants · Cliniques · Commerces · Hôtels</span>
+          <h3>Un avis négatif arrive.<br>Le responsable est alerté avant de l'avoir vu.</h3>
+          <p class="wf-problem">Avant : des avis passés inaperçus pendant des jours, des réponses tardives, une réputation qui se dégrade en silence.</p>
+        </header>
+        <ol class="wf-steps" aria-label="Étapes du workflow">
+          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📡</span><div><strong>Déclenchement</strong><span>Un nouvel avis apparaît sur la fiche Google My Business. Le workflow se déclenche automatiquement.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">⭐</span><div><strong>Lecture du score</strong><span>n8n lit la note : inférieure à 3 étoiles → voie urgente. 4 ou 5 étoiles → voie positive.</span></div></li>
+          <li class="wf-step branch-neg"><span class="step-icon" aria-hidden="true">🚨</span><div><strong>Alerte urgente <span class="branch-tag">&lt; 3 ★</span></strong><span>SMS + email envoyés au responsable dans la minute. Un brouillon de réponse est préparé, prêt à être ajusté.</span></div></li>
+          <li class="wf-step branch-pos"><span class="step-icon" aria-hidden="true">💬</span><div><strong>Remerciement <span class="branch-tag pos">≥ 4 ★</span></strong><span>Un email de remerciement personnalisé est préparé. Le responsable valide avant envoi — jamais automatique.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">📊</span><div><strong>Enregistrement</strong><span>Chaque avis est logué dans Airtable : date, note, texte, statut de réponse. Le suivi devient visible.</span></div></li>
+          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>C'est toujours le responsable qui publie la réponse. L'outil prépare, l'humain signe.</span></div></li>
+        </ol>
+        <footer class="wf-footer">
+          <div class="wf-result"><span class="result-label">Après</span><span>Aucun avis sans réponse dans les 24h. Les avis négatifs gérés avant que personne d'autre ne les lise.</span></div>
+          <ul class="wf-tools" aria-label="Outils utilisés">
+            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
+            <li><svg class="logo" style="color:#18BFFF" aria-hidden="true"><use href="#i-airtable"/></svg>Airtable</li>
+            <li><span class="logo-text" aria-hidden="true">★</span>Google</li>
+            <li><span class="logo-text" aria-hidden="true">📱</span>SMS</li>
+          </ul>
+        </footer>
+      </article>
+
+    </div><!-- /.wf-grid -->
+
+    <p class="wf-disclaimer">Ces scénarios sont des modèles reproductibles, pas des promesses de résultat. Les gains mentionnés sont des estimations basées sur des hypothèses de volume et de temps : ils sont à mesurer dans votre contexte réel.</p>
   </section>
 
   <!-- 4. PROFIL -->

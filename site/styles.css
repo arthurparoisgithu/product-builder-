@@ -173,3 +173,44 @@
 @media(max-width:560px){.hero2{padding-top:36px;padding-bottom:50px}.hero2-pitch{font-size:16px}.button.cta{width:100%}.tool-row{grid-template-columns:repeat(3,1fr)}.services,.profile2{padding-top:56px;padding-bottom:56px}.tool-grid{grid-template-columns:1fr}.also-project{flex-direction:column;align-items:flex-start}.contact-band{padding:60px 0}.contact-actions .button{width:100%}.footer>div{margin-left:0;flex-wrap:wrap}.header-cta{display:none}}
 @media(prefers-reduced-motion:reduce){.pulse{animation:none}.service-card:hover{transform:none}}
 @media(max-width:800px){.featured-project .project-copy{grid-template-columns:1fr;padding:24px}.featured-project dl{grid-column:1;grid-row:auto}}
+
+/* ── WORKFLOWS CONCRETS ──────────────────────────────── */
+.wf-section { padding-block: 5rem; }
+.wf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 2rem; margin-block-start: 3rem; }
+.wf-card { background: #fff; border: 1px solid #e8e6df; border-radius: 1rem; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.wf-header { display: flex; flex-direction: column; gap: .6rem; }
+.wf-industry { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #7c6f5a; background: #f6f5f0; border-radius: 2rem; padding: .25rem .75rem; width: fit-content; }
+.wf-header h3 { font-size: 1.15rem; line-height: 1.35; margin: 0; }
+.wf-problem { font-size: .85rem; color: #888; border-left: 2px solid #e0ded6; padding-left: .75rem; margin: 0; }
+
+/* Steps */
+.wf-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0; counter-reset: wf-step; }
+.wf-step { display: flex; align-items: flex-start; gap: .85rem; padding: .85rem 0; border-left: 2px solid #e8e6df; margin-left: 1.1rem; padding-left: 1.25rem; position: relative; counter-increment: wf-step; }
+.wf-step::before { content: counter(wf-step); position: absolute; left: -1.1rem; top: .85rem; width: 2rem; height: 2rem; border-radius: 50%; background: #f6f5f0; border: 1.5px solid #e8e6df; display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700; color: #4a3f2f; line-height: 1; text-align: center; transform: translateX(-50%); }
+.wf-step.trigger::before { background: #4a3f2f; color: #fff; border-color: #4a3f2f; }
+.wf-step.human::before   { background: #2c5f2e; color: #fff; border-color: #2c5f2e; }
+.wf-step:last-child { border-left-color: transparent; }
+.step-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .1rem; }
+.wf-step div { display: flex; flex-direction: column; gap: .2rem; }
+.wf-step strong { font-size: .9rem; color: #1a1410; }
+.wf-step span   { font-size: .82rem; color: #5a4e3a; line-height: 1.5; }
+.branch-tag { display: inline-block; font-size: .68rem; font-weight: 700; padding: .1em .4em; border-radius: .25rem; background: #fee; color: #c0392b; margin-left: .3rem; }
+.branch-tag.pos { background: #efe; color: #2c7a2c; }
+.wf-step.branch-neg { border-left-color: #fcd; }
+.wf-step.branch-pos { border-left-color: #cfc; }
+
+/* Footer */
+.wf-footer { margin-top: auto; display: flex; flex-direction: column; gap: .9rem; padding-top: 1rem; border-top: 1px solid #e8e6df; }
+.wf-result { display: flex; flex-direction: column; gap: .25rem; }
+.result-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #2c5f2e; }
+.wf-result span:last-child { font-size: .85rem; color: #1a1410; }
+.wf-tools { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: .5rem; }
+.wf-tools li { display: flex; align-items: center; gap: .3rem; font-size: .78rem; color: #5a4e3a; background: #f6f5f0; padding: .2rem .6rem; border-radius: 2rem; }
+.wf-tools .logo { width: 1rem; height: 1rem; }
+.wf-tools .logo-text { font-size: .7rem; }
+.wf-disclaimer { margin-top: 2.5rem; font-size: .78rem; color: #888; text-align: center; max-width: 640px; margin-inline: auto; }
+
+@media (max-width: 640px) {
+  .wf-grid { grid-template-columns: 1fr; }
+  .wf-card { padding: 1.5rem; }
+}

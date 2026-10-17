@@ -50,7 +50,7 @@ Ne pas placer de clés API dans les fichiers du site ou dans GitHub. Une future 
 
 1. **Hero** : nom, titre « Chef de Projet IA & No-Code », formation Oreegami (RNCP 40677, niveau 6), disponibilité en alternance dès 2027, CTA email + téléphone, carte de profil avec avatar et logos d’outils.
 2. **Ce que je fais** : trois cartes (automatiser, construire l’outil utile, traduire l’IA pour les équipes non techniques).
-3. **Preuves** : workflow n8n à quatre agents, BriefOps, site du cabinet de kiné, AnimApp ; puis les deux démos interactives (BriefOps et simulateurs n8n avec calcul de gain).
+3. **Preuves** : workflow n8n à quatre agents, BriefOps (aperçu), site du cabinet de kiné, AnimApp ; puis la section **Workflows concrets** (`#workflows`) : trois scénarios d’automatisation génériques et statiques (devis entrant, onboarding d’un collaborateur, avis Google), chacun en six étapes avec point de contrôle humain. Les anciennes démos interactives BriefOps et simulateurs de gain n8n ont été retirées de la page ; `js/data.js`, `js/logic.js` et `site/workflows/` restent dans le dépôt.
 4. **Profil** : parcours, formation Oreegami (chiffres communiqués par l’école), engagement au VLIPP, outils.
 5. **Contact** : bandeau CTA email + téléphone.
 
