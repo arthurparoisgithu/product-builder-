@@ -23,11 +23,11 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     page.keyboard.press('Enter')
     assert page.evaluate("document.activeElement.id") == 'main'
     # Structure : hero, services, preuves, workflows concrets, profil, contact
-    for section_id in ('accueil', 'services', 'realisations', 'workflows', 'profil', 'contact'):
+    for section_id in ('accueil', 'services', 'workflows', 'profil', 'contact'):
         assert page.locator(f'#{section_id}').count() == 1, section_id
-    for removed in ('demo', 'impact', 'video'):
+    for removed in ('demo', 'impact', 'video', 'realisations'):
         assert page.locator(f'#{removed}').count() == 0, removed
-    assert page.locator('a[href="#demo"], a[href="#impact"]').count() == 0
+    assert page.locator('a[href="#demo"], a[href="#impact"], a[href="#realisations"]').count() == 0
     assert page.locator('nav a[href="#workflows"]').inner_text() == 'Workflows'
     assert 'Chef de Projet IA & No-Code' in page.locator('h1').inner_text()
     assert 'RNCP 40677' in page.locator('#accueil').inner_text()
