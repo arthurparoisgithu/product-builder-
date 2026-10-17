@@ -16,6 +16,23 @@ if ('IntersectionObserver' in window && navLinks.length) {
   });
 }
 
+// Apparition au scroll (fade + léger slide-up), une seule fois par section.
+const revealEls = document.querySelectorAll('.reveal');
+if (revealEls.length) {
+  if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(el => revealObserver.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('in-view'));
+  }
+}
+
 // Secours pour les liens mailto : sur un poste sans messagerie par défaut configurée
 // (fréquent sur un ordinateur d'entreprise), le clic ne fait rien de visible.
 // On copie l'adresse dans le presse-papiers et on le signale, sans empêcher le mailto.
