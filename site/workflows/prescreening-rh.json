@@ -1,0 +1,185 @@
+{
+  "name": "Pré-screening RH — Analyse des candidatures et préparation des entretiens",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "candidature",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "925e7135-bb21-4abe-bfe5-b75318cb2813",
+      "name": "Candidature reçue",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "Modèle à importer : inactif, sans identifiants. Les URL, ID et canaux sont des valeurs à remplacer.",
+      "notesInFlow": true,
+      "webhookId": "candidature"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Structure la candidature reçue (formulaire, job board ou email déjà converti en texte).\n// Une information absente reste vide : elle n'est jamais devinée.\nconst c = $input.first().json.body ?? $input.first().json;\nconst texte = String(c.cv_texte ?? c.cv ?? '') + '\\n' + String(c.lettre ?? '');\nconst chercher = (re) => (texte.match(re)?.[1] ?? '').trim();\nconst annees = chercher(/(\\d{1,2})\\s*(?:ans|années)\\s+d['’]expérience/i);\nconst COMPETENCES = ['n8n', 'make', 'zapier', 'airtable', 'notion', 'python', 'javascript', 'sql', 'excel',\n  'gestion de projet', 'anglais', 'crm', 'salesforce', 'hubspot', 'api'];\nconst competences = COMPETENCES.filter((k) => texte.toLowerCase().includes(k));\nreturn [{ json: {\n  nom: String(c.nom ?? '').trim(),\n  email: String(c.email ?? '').trim(),\n  poste: String(c.poste ?? '').trim(),\n  anneesExperience: annees ? Number(annees) : null,\n  competences,\n  formation: chercher(/((?:master|licence|bac\\s*\\+\\s*\\d|bts|but|mba|rncp)[^\\n.]{0,60})/i),\n  mobilite: chercher(/mobilit[ée]\\s*:?\\s*([^\\n.]{2,60})/i),\n  texte,\n  recuLe: new Date().toISOString(),\n} }];"
+      },
+      "id": "00c0f113-4dfb-41e0-a739-e4cedf21c33c",
+      "name": "Extraire le profil",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compare le profil aux critères du poste et produit un résumé structuré.\n// Ce n'est JAMAIS une décision : le statut reste \"À examiner par le recruteur\".\n// Critères à définir pour chaque poste. Le champ \"promptIA\" peut être envoyé à un LLM.\nconst CRITERES = {\n  mustHave: ['gestion de projet', 'airtable'],\n  niceToHave: ['n8n', 'make', 'api', 'anglais'],\n  experienceMin: 1,\n};\nconst p = $input.first().json;\nconst mustOk = CRITERES.mustHave.filter((k) => p.competences.includes(k));\nconst niceOk = CRITERES.niceToHave.filter((k) => p.competences.includes(k));\nconst expOk = p.anneesExperience === null ? null : p.anneesExperience >= CRITERES.experienceMin;\nconst score = Math.round(\n  (mustOk.length / CRITERES.mustHave.length) * 60 +\n  (niceOk.length / CRITERES.niceToHave.length) * 25 +\n  (expOk ? 15 : 0));\nconst manquants = CRITERES.mustHave.filter((k) => !mustOk.includes(k));\nconst questions = [\n  ...manquants.map((k) => `Pouvez-vous décrire une expérience liée à : ${k} ?`),\n  ...(expOk === null ? ['Combien d’années d’expérience avez-vous sur ce type de poste ?'] : []),\n  ...(!p.mobilite ? ['Quelle est votre mobilité géographique ?'] : []),\n  'Quel projet récent illustre le mieux votre façon de travailler ?',\n];\nreturn [{ json: {\n  ...p,\n  scoreCorrespondance: score,\n  resume: `Must-have : ${mustOk.length}/${CRITERES.mustHave.length}${manquants.length ? ` (manque : ${manquants.join(', ')})` : ''}. ` +\n    `Nice-to-have : ${niceOk.join(', ') || 'aucun'}. Expérience : ${p.anneesExperience ?? 'non précisée'} an(s).`,\n  questionsEntretien: questions.join('\\n'),\n  statut: 'À examiner par le recruteur',\n  promptIA: `Résume ce profil en 5 lignes par rapport aux critères ${JSON.stringify(CRITERES)}. N'émets aucune décision.\\n${p.texte.slice(0, 4000)}`,\n} }];"
+      },
+      "id": "c53810c8-3d2a-4153-ac4d-de4a51a0d842",
+      "name": "Analyse par critères",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ],
+      "notes": "Résumé structuré uniquement, jamais de décision automatique.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "recrutement@votre-entreprise.example",
+        "toEmail": "={{ $json.email }}",
+        "subject": "=Votre candidature — {{ $json.poste || \"poste\" }}",
+        "emailFormat": "text",
+        "text": "=Bonjour {{ $json.nom }},\n\nNous avons bien reçu votre candidature. Elle sera lue par un recruteur sous 10 jours ouvrés. Nous reviendrons vers vous par email, quelle que soit la suite donnée.\n\nCordialement,\nL’équipe recrutement",
+        "options": {}
+      },
+      "id": "532808fe-7448-42d4-8497-a7a38fe647ca",
+      "name": "Accusé de réception candidat",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        750,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appVOTRE_BASE_ID"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "id",
+          "value": "tblVOTRE_TABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nom": "={{ $('Analyse par critères').item.json.nom }}",
+            "Email": "={{ $('Analyse par critères').item.json.email }}",
+            "Poste": "={{ $('Analyse par critères').item.json.poste }}",
+            "Score": "={{ $('Analyse par critères').item.json.scoreCorrespondance }}",
+            "Résumé": "={{ $('Analyse par critères').item.json.resume }}",
+            "Questions entretien": "={{ $('Analyse par critères').item.json.questionsEntretien }}",
+            "Statut": "={{ $('Analyse par critères').item.json.statut }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "5dbc5827-cc59-4033-84ee-24d108f9033b",
+      "name": "Fiche candidat Airtable",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "08598d48-d296-47a2-8373-861d8f2755aa",
+      "name": "Décision et planification par le recruteur",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ],
+      "notes": "Point de contrôle humain : le recruteur lit le résumé, décide, puis planifie l'entretien.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Candidature reçue": {
+      "main": [
+        [
+          {
+            "node": "Extraire le profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraire le profil": {
+      "main": [
+        [
+          {
+            "node": "Analyse par critères",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyse par critères": {
+      "main": [
+        [
+          {
+            "node": "Accusé de réception candidat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accusé de réception candidat": {
+      "main": [
+        [
+          {
+            "node": "Fiche candidat Airtable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fiche candidat Airtable": {
+      "main": [
+        [
+          {
+            "node": "Décision et planification par le recruteur",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

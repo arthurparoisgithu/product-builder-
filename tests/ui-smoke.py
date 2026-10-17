@@ -43,7 +43,7 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     assert page.evaluate("document.querySelector('#methode').compareDocumentPosition(document.querySelector('#workflows')) & 4")
     downloads = page.locator('#workflows .wf-card .wf-footer a.wf-download[download]')
     assert downloads.count() == 3
-    assert [downloads.nth(i).get_attribute('href') for i in range(3)] == ['./workflows/devis-entrant.json', './workflows/onboarding-collaborateur.json', './workflows/avis-google.json']
+    assert [downloads.nth(i).get_attribute('href') for i in range(3)] == ['./workflows/qualification-leads-b2b.json', './workflows/recyclage-contenu.json', './workflows/prescreening-rh.json']
     assert page.locator('svg use[href="#i-n8n"]').count() >= 1
     assert page.evaluate("document.querySelector('#i-n8n path').getAttribute('d').length > 50")
     page.locator('nav a[href="#workflows"]').click()
@@ -56,7 +56,7 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
             offending = page.evaluate("Array.from(document.querySelectorAll('body *')).filter(e => e.getBoundingClientRect().right > innerWidth+1).map(e => ({tag:e.tagName, cls:e.className, right:e.getBoundingClientRect().right})).slice(0,12)")
             raise AssertionError(f'Débordement à {width}px : {offending}')
     assert not errors, errors
-    for asset in ('/assets/n8n-workflow.jpg', '/assets/animapp.jpg', '/assets/kine-site.jpg', '/workflows/prospect-research.json', '/workflows/follow-up-drafts.json', '/workflows/meeting-actions.json', '/workflows/devis-entrant.json', '/workflows/onboarding-collaborateur.json', '/workflows/avis-google.json', '/manus-routes.json'):
+    for asset in ('/assets/n8n-workflow.jpg', '/assets/animapp.jpg', '/assets/kine-site.jpg', '/workflows/prospect-research.json', '/workflows/follow-up-drafts.json', '/workflows/meeting-actions.json', '/workflows/devis-entrant.json', '/workflows/onboarding-collaborateur.json', '/workflows/avis-google.json', '/workflows/qualification-leads-b2b.json', '/workflows/recyclage-contenu.json', '/workflows/prescreening-rh.json', '/manus-routes.json'):
         response = context.request.get(BASE + asset)
         assert response.status == 200, (asset, response.status)
     browser.close()

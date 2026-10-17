@@ -27,6 +27,14 @@ Ce sont des modèles à importer. Ils sont inactifs et sans identifiants. Les id
 
 | Fichier | Carte | Enchaînement |
 |---|---|---|
+| `qualification-leads-b2b.json` | Qualification de leads B2B | Webhook formulaire → enrichissement (API publique Recherche d'entreprises, remplaçable par Clay) → scoring ICP (Code, prompt prêt pour un LLM) → contact HubSpot → alerte Slack → décision du commercial |
+| `recyclage-contenu.json` | Recyclage de contenu marketing | Flux RSS → extraction de l'article → 5 formats (Code : brouillons + prompts pour un LLM) → consignes de ton de marque → file d'attente Notion (API HTTP, adaptable à Buffer) → validation du responsable marketing |
+| `prescreening-rh.json` | Pré-screening RH | Webhook candidature → extraction du profil → analyse must-have / nice-to-have (résumé, jamais de décision) → accusé de réception → fiche Airtable avec questions d'entretien → décision et planification par le recruteur |
+
+Les modèles suivants correspondent aux anciennes cartes. Ils restent disponibles dans le dossier.
+
+| Fichier | Carte | Enchaînement |
+|---|---|---|
 | `devis-entrant.json` | Un devis arrive par email | Webhook → extraction nom/besoin/budget/délai → fiche Airtable → accusé de réception → alerte Slack → validation commerciale avant réponse |
 | `onboarding-collaborateur.json` | Un collaborateur arrive lundi | Formulaire RH → création des accès (HTTP, à configurer) → email de bienvenue → checklist Notion → invitations Google Agenda → récapitulatif manager 48 h avant l’arrivée |
 | `avis-google.json` | Un avis négatif arrive | Webhook → note < 3 ? → alerte Slack + email (avis négatif) → brouillon de réponse → journal Airtable → publication par le responsable uniquement |

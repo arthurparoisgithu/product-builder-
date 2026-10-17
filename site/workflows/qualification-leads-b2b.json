@@ -1,0 +1,177 @@
+{
+  "name": "Qualification de leads B2B — Enrichissement et scoring",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-b2b",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "fdce8006-8c68-453a-b398-896a7ab908bb",
+      "name": "Formulaire de contact",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "Modèle à importer : inactif, sans identifiants. Les URL, ID et canaux sont des valeurs à remplacer.",
+      "notesInFlow": true,
+      "webhookId": "lead-b2b"
+    },
+    {
+      "parameters": {
+        "url": "=https://recherche-entreprises.api.gouv.fr/search?q={{ encodeURIComponent($json.body.entreprise || '') }}&per_page=1",
+        "options": {}
+      },
+      "id": "8bb10a95-a6c8-41e5-8686-4f2cd54cf46b",
+      "name": "Enrichissement (sources publiques)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        250,
+        300
+      ],
+      "notes": "API publique Recherche d'entreprises. Peut être remplacée par Clay ou un autre fournisseur.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Scoring ICP (Ideal Customer Profile) du prospect.\n// Les critères ICP sont à adapter. Le score par règles sert de base ;\n// le champ \"promptIA\" est prêt à être envoyé à un nœud LLM (Claude/GPT) pour un résumé.\n// Règle : une donnée absente n'est jamais devinée, elle est listée dans \"donneesManquantes\".\nconst ICP = {\n  tranchesEffectif: ['11', '12', '21', '22', '31', '32'], // codes INSEE : 10 à 499 salariés\n  postesCibles: ['directeur', 'directrice', 'head', 'responsable', 'ceo', 'cto', 'coo', 'fondateur', 'fondatrice'],\n  nafCibles: ['62', '63', '70', '73'], // informatique, info, conseil, publicité\n};\nconst lead = $('Formulaire de contact').first().json.body ?? {};\nconst ent = ($input.first().json.results ?? [])[0] ?? {};\n\nconst poste = String(lead.poste ?? '').toLowerCase();\nconst naf = String(ent.activite_principale ?? '');\nconst effectif = String(ent.tranche_effectif_salarie ?? '');\n\nconst criteres = {\n  entrepriseTrouvee: Boolean(ent.siren),\n  tailleCible: ICP.tranchesEffectif.includes(effectif),\n  secteurCible: ICP.nafCibles.some((p) => naf.startsWith(p)),\n  posteDecideur: ICP.postesCibles.some((p) => poste.includes(p)),\n  emailPro: /@/.test(lead.email ?? '') && !/@(gmail|yahoo|hotmail|outlook)\\./i.test(lead.email ?? ''),\n};\nconst poids = { entrepriseTrouvee: 10, tailleCible: 25, secteurCible: 25, posteDecideur: 25, emailPro: 15 };\nconst score = Object.entries(criteres).reduce((s, [k, ok]) => s + (ok ? poids[k] : 0), 0);\n\nconst profil = {\n  nom: lead.nom ?? '', email: lead.email ?? '', poste: lead.poste ?? '',\n  entreprise: ent.nom_complet ?? lead.entreprise ?? '', siren: ent.siren ?? '',\n  secteurNaf: naf, trancheEffectif: effectif, message: lead.message ?? '',\n};\nconst donneesManquantes = Object.entries(profil).filter(([, v]) => !v).map(([k]) => k);\n\nreturn [{ json: {\n  ...profil, score, criteres,\n  priorite: score >= 70 ? 'Haute' : score >= 40 ? 'Moyenne' : 'Basse',\n  donneesManquantes: donneesManquantes.join(', '),\n  promptIA: `Résume ce prospect B2B en 3 lignes et explique son score ICP (${score}/100). Ne complète aucune donnée absente.\\n${JSON.stringify(profil)}`,\n} }];"
+      },
+      "id": "45880f48-726c-4f37-9da6-c2825695ee3f",
+      "name": "Scoring IA (critères ICP)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.email }}",
+        "additionalFields": {
+          "firstName": "={{ $json.nom }}",
+          "jobTitle": "={{ $json.poste }}",
+          "companyName": "={{ $json.entreprise }}",
+          "message": "=Score ICP : {{ $json.score }}/100 ({{ $json.priorite }})"
+        }
+      },
+      "id": "77184f27-0b1e-4a78-8283-28b3a3f59777",
+      "name": "Créer la fiche CRM (HubSpot)",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        750,
+        300
+      ],
+      "notes": "Alternative possible : Pipedrive ou Airtable.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "name",
+          "value": "#commercial"
+        },
+        "text": "=Nouveau prospect qualifié\n• {{ $('Scoring IA (critères ICP)').item.json.nom }} — {{ $('Scoring IA (critères ICP)').item.json.poste }}\n• Entreprise : {{ $('Scoring IA (critères ICP)').item.json.entreprise || 'non trouvée' }}\n• Score ICP : {{ $('Scoring IA (critères ICP)').item.json.score }}/100 ({{ $('Scoring IA (critères ICP)').item.json.priorite }})\n• Données manquantes : {{ $('Scoring IA (critères ICP)').item.json.donneesManquantes || 'aucune' }}",
+        "otherOptions": {}
+      },
+      "id": "b850b045-c1e9-4349-8d8e-2140bf1fa568",
+      "name": "Alerte commerciale Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1000,
+        300
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "4d7cf779-124e-48c7-a805-8aefedc612ef",
+      "name": "Décision du commercial",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ],
+      "notes": "Point de contrôle humain : c'est le commercial qui décide de contacter. Aucun message n'est envoyé au prospect.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Formulaire de contact": {
+      "main": [
+        [
+          {
+            "node": "Enrichissement (sources publiques)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrichissement (sources publiques)": {
+      "main": [
+        [
+          {
+            "node": "Scoring IA (critères ICP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scoring IA (critères ICP)": {
+      "main": [
+        [
+          {
+            "node": "Créer la fiche CRM (HubSpot)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer la fiche CRM (HubSpot)": {
+      "main": [
+        [
+          {
+            "node": "Alerte commerciale Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alerte commerciale Slack": {
+      "main": [
+        [
+          {
+            "node": "Décision du commercial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,183 @@
+{
+  "name": "Recyclage de contenu marketing — 1 article, 5 formats",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "feedUrl": "https://votre-blog.example/feed"
+      },
+      "id": "cdb793dc-044e-4459-8453-3ece5262b8c1",
+      "name": "Nouvel article (RSS)",
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "Modèle à importer : inactif, sans identifiants. Les URL, ID et canaux sont des valeurs à remplacer.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "f2aa6843-55b3-4460-9ce7-326f626776cc",
+      "name": "Extraire le contenu de l'article",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prépare les 5 adaptations d'un article à partir de son contenu extrait.\n// Chaque format contient un brouillon de base et un prompt prêt pour un nœud LLM (Claude/GPT).\n// Rien n'est publié : tout part en file d'attente pour relecture.\nconst article = $('Nouvel article (RSS)').first().json;\nconst html = String($input.first().json.data ?? '');\nconst texte = html.replace(/<script[\\s\\S]*?<\\/script>|<style[\\s\\S]*?<\\/style>/gi, ' ')\n  .replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim();\nconst sousTitres = [...html.matchAll(/<h[23][^>]*>([\\s\\S]*?)<\\/h[23]>/gi)]\n  .map((m) => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean).slice(0, 5);\nconst phrases = texte.split(/(?<=[.!?])\\s+/).filter((p) => p.length > 40);\nconst pointsCles = sousTitres.length ? sousTitres : phrases.slice(0, 3);\nconst titre = article.title ?? '';\nconst lien = article.link ?? '';\nconst source = `Titre : ${titre}\\nPoints clés : ${pointsCles.join(' | ')}\\nConclusion : ${phrases.at(-1) ?? ''}`;\n\nconst formats = {\n  linkedin: { consigne: 'Post LinkedIn : accroche, corps en 3 points, appel à l’action.',\n    brouillon: `${titre}\\n\\n${pointsCles.map((p) => `→ ${p}`).join('\\n')}\\n\\nL’article complet : ${lien}` },\n  thread: { consigne: 'Thread court de 4 messages maximum.',\n    brouillon: pointsCles.map((p, i) => `${i + 1}/ ${p}`).join('\\n') },\n  newsletter: { consigne: 'Bloc newsletter : titre, 3 phrases, lien.',\n    brouillon: `${titre}\\n${phrases.slice(0, 3).join(' ')}\\nLire : ${lien}` },\n  scriptVideo: { consigne: 'Script vidéo courte (30-45 s) : accroche, 3 idées, conclusion.',\n    brouillon: `Accroche : ${titre}\\n${pointsCles.map((p) => `- ${p}`).join('\\n')}` },\n  resumeEmail: { consigne: 'Résumé email de 5 lignes maximum.',\n    brouillon: phrases.slice(0, 2).join(' ') },\n};\nreturn Object.entries(formats).map(([format, f]) => ({ json: {\n  format, titre, lien, brouillon: f.brouillon,\n  promptIA: `${f.consigne} Utilise uniquement les informations ci-dessous, sans en ajouter.\\n${source}`,\n} }));"
+      },
+      "id": "0fd72d43-d4ed-415b-8595-286e388d7e5a",
+      "name": "IA : 5 formats",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        300
+      ],
+      "notes": "Brouillons + prompts. Brancher un nœud LLM (Claude/GPT) après ce nœud pour la rédaction finale.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Applique les consignes de ton de la marque à chaque format.\n// Les consignes sont à remplacer par la charte éditoriale réelle de l'entreprise.\nconst CHARTE = {\n  ton: 'clair, direct, sans jargon',\n  tutoiement: false,\n  motsInterdits: ['révolutionnaire', 'incroyable', 'game changer'],\n};\nconst jours = { linkedin: 1, thread: 2, newsletter: 3, scriptVideo: 5, resumeEmail: 7 };\nreturn $input.all().map(({ json }) => {\n  const alertes = CHARTE.motsInterdits.filter((m) => json.brouillon.toLowerCase().includes(m));\n  const date = new Date(Date.now() + (jours[json.format] ?? 1) * 864e5).toISOString().slice(0, 10);\n  return { json: {\n    ...json,\n    promptIA: `${json.promptIA}\\nTon : ${CHARTE.ton}. ${CHARTE.tutoiement ? 'Tutoiement.' : 'Vouvoiement.'} Mots interdits : ${CHARTE.motsInterdits.join(', ')}.`,\n    alertesTon: alertes.join(', '),\n    datePublicationSuggeree: date,\n    statut: 'À relire',\n  } };\n});"
+      },
+      "id": "b82e3a96-6b38-4b01-b1ed-d8515f90b03b",
+      "name": "Respect du ton de marque",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        750,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ parent: { database_id: 'VOTRE_DATABASE_ID' }, properties: { Titre: { title: [{ text: { content: $json.titre + ' — ' + $json.format } }] }, Statut: { select: { name: $json.statut } }, Date: { date: { start: $json.datePublicationSuggeree } } }, children: [{ object: 'block', type: 'paragraph', paragraph: { rich_text: [{ text: { content: $json.brouillon.slice(0, 1900) } }] } }] }) }}",
+        "options": {}
+      },
+      "id": "b9798eee-dbd2-4866-80e1-2759378cda67",
+      "name": "File d'attente (Notion / Buffer)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1000,
+        300
+      ],
+      "notes": "Authentification Notion à ajouter dans n8n. Adapter l'URL et le corps pour Buffer ou Later.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {},
+      "id": "847c7530-e850-4574-bd4c-f4d92d942e05",
+      "name": "Validation du responsable marketing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ],
+      "notes": "Point de contrôle humain : rien n’est publié sans relecture et validation.",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Nouvel article (RSS)": {
+      "main": [
+        [
+          {
+            "node": "Extraire le contenu de l'article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraire le contenu de l'article": {
+      "main": [
+        [
+          {
+            "node": "IA : 5 formats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IA : 5 formats": {
+      "main": [
+        [
+          {
+            "node": "Respect du ton de marque",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respect du ton de marque": {
+      "main": [
+        [
+          {
+            "node": "File d'attente (Notion / Buffer)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File d'attente (Notion / Buffer)": {
+      "main": [
+        [
+          {
+            "node": "Validation du responsable marketing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -3,9 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Arthur Parois, Chef de Projet IA & No-Code en formation certifiante Oreegami (RNCP 40677, niveau 6). Disponible en alternance dès 2027. Automatisations n8n, outils no-code et IA appliquée.">
+  <meta name="description" content="Arthur Parois — Chef de Projet IA & No-Code, disponible en alternance dès 2027 (Nantes). Formation Oreegami RNCP niveau 6. Automatisations n8n, Make, Airtable, IA générative appliquée aux équipes.">
+  <meta name="keywords" content="alternant IA no-code Nantes 2027, chef de projet IA, automatisation n8n, Make, Airtable, workflow entreprise, formation Oreegami RNCP 40677">
+  <meta property="og:title" content="Arthur Parois — Chef de Projet IA & No-Code · Alternance 2027">
+  <meta property="og:description" content="Je construis des automatisations et des outils IA qu'une équipe va réellement utiliser. Disponible en alternance dès 2027 (Nantes).">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://arthurparoisgithu.github.io/product-builder-/site/">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://arthurparoisgithu.github.io/product-builder-/site/">
   <meta name="theme-color" content="#f6f5f0">
-  <title>Arthur Parois — Chef de Projet IA & No-Code · Alternance 2027</title>
+  <title>Arthur Parois — Chef de Projet IA &amp; No-Code · Alternance Nantes 2027</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
   <script type="module" src="./js/app.js"></script>
@@ -128,88 +135,88 @@
 
     <div class="wf-grid">
 
-      <!-- WORKFLOW 1 : DEVIS ENTRANT -->
-      <article class="wf-card" aria-label="Workflow : traitement d'un devis entrant">
+      <!-- WORKFLOW 1 : LEADS B2B -->
+      <article class="wf-card" aria-label="Workflow : qualification de leads B2B">
         <header class="wf-header">
-          <span class="wf-industry">Agences · Prestataires · Artisans</span>
-          <h3>Un devis arrive par email.<br>L'équipe est prévenue en 30 secondes.</h3>
-          <p class="wf-problem">Avant : 20 minutes de saisie manuelle par demande, des oublis, des devis perdus dans la boîte mail.</p>
+          <span class="wf-industry">Équipes commerciales · SaaS · Services B2B</span>
+          <h3>Un prospect visite le site.<br>Il est qualifié et dans le CRM en deux minutes.</h3>
+          <p class="wf-problem">Avant : chaque commercial passe 30 minutes à chercher les infos d'un prospect avant de décrocher le téléphone. La moitié sont perdues dans des tableurs.</p>
         </header>
         <ol class="wf-steps" aria-label="Étapes du workflow">
-          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📥</span><div><strong>Déclenchement</strong><span>Un email ou un formulaire web arrive avec une demande de devis.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">🔍</span><div><strong>Extraction automatique</strong><span>n8n lit le message et identifie : nom du contact, besoin exprimé, budget mentionné, délai souhaité.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">🗂️</span><div><strong>Création de fiche CRM</strong><span>Une fiche est créée dans Airtable avec toutes les informations extraites. Rien à ressaisir.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">✉️</span><div><strong>Accusé de réception</strong><span>Un email de confirmation part automatiquement au prospect : « Votre demande a bien été reçue, nous revenons vers vous sous 24h. »</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">🔔</span><div><strong>Alerte interne</strong><span>Un message Slack est envoyé à l'équipe commerciale avec le résumé du devis et un lien direct vers la fiche.</span></div></li>
-          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le commercial ouvre la fiche, vérifie, qualifie, puis répond. L'outil prépare, l'humain décide.</span></div></li>
+          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📥</span><div><strong>Déclenchement</strong><span>Un formulaire de contact est soumis, ou un prospect est identifié via un outil de tracking (lemlist, Clay, formulaire web).</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🔍</span><div><strong>Enrichissement automatique</strong><span>n8n interroge des sources publiques pour compléter le profil : secteur, taille de l'entreprise, poste du contact, technologies utilisées.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🎯</span><div><strong>Scoring IA</strong><span>Un modèle de langage analyse le profil et attribue un score de correspondance avec les critères ICP (Ideal Customer Profile) de l'entreprise.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🗂️</span><div><strong>Création CRM</strong><span>Une fiche est créée dans le CRM (HubSpot, Pipedrive, Airtable) avec toutes les données enrichies et le score. Rien à ressaisir.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🔔</span><div><strong>Alerte commerciale</strong><span>Le commercial reçoit une notification Slack avec un résumé du profil et le score de qualification. Il sait en 10 secondes s'il rappelle.</span></div></li>
+          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>C'est le commercial qui décide de contacter. L'outil qualifie, l'humain vend.</span></div></li>
         </ol>
         <footer class="wf-footer">
-          <div class="wf-result"><span class="result-label">Après</span><span>2 minutes pour relire et répondre, contre 20 minutes avant. Aucun devis oublié.</span></div>
+          <div class="wf-result"><span class="result-label">Après</span><span>30 minutes de recherche manuelle → 2 minutes de lecture. Les commerciaux passent plus de temps à vendre, moins à chercher.</span></div>
           <ul class="wf-tools" aria-label="Outils utilisés">
             <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
+            <li><span class="logo-text" aria-hidden="true">◎</span>Clay/API</li>
+            <li><span class="logo-text" aria-hidden="true">◆</span>CRM (HubSpot)</li>
+            <li><span class="logo-text" aria-hidden="true">💬</span>Slack</li>
+          </ul>
+          <a class="wf-download" href="./workflows/qualification-leads-b2b.json" download="qualification-leads-b2b.json">
+            Télécharger le modèle n8n <span aria-hidden="true">↓</span>
+          </a>
+        </footer>
+      </article>
+
+      <!-- WORKFLOW 2 : CONTENU MARKETING -->
+      <article class="wf-card" aria-label="Workflow : recyclage de contenu marketing">
+        <header class="wf-header">
+          <span class="wf-industry">Équipes marketing · Agences · Créateurs de contenu</span>
+          <h3>Un article est publié.<br>Cinq formats sont prêts pour les réseaux en dix minutes.</h3>
+          <p class="wf-problem">Avant : un article de blog demande 2 heures d'écriture, puis 3 heures supplémentaires pour adapter le contenu à chaque canal. Résultat : LinkedIn et les newsletters sont souvent abandonnés.</p>
+        </header>
+        <ol class="wf-steps" aria-label="Étapes du workflow">
+          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📡</span><div><strong>Déclenchement</strong><span>Un nouvel article est publié sur le blog (webhook Wordpress, Webflow, ou RSS). Le workflow s'active automatiquement.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">📄</span><div><strong>Extraction du contenu</strong><span>n8n extrait le texte complet de l'article : titre, sous-titres, points clés, conclusion.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">✍️</span><div><strong>Adaptation par format</strong><span>Un agent IA génère 5 versions : post LinkedIn (accroche + corps + CTA), thread court, newsletter, script vidéo courte, et résumé email.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🎨</span><div><strong>Respect du ton</strong><span>Chaque version respecte les consignes de style de la marque, passées en contexte à l'agent. Le ton ne change pas d'un format à l'autre.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🗓️</span><div><strong>Mise en file d'attente</strong><span>Les contenus sont déposés dans l'outil de planification (Buffer, Later, Notion) avec les dates de publication suggérées.</span></div></li>
+          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le responsable marketing relit et valide avant publication. L'outil prépare, l'humain signe.</span></div></li>
+        </ol>
+        <footer class="wf-footer">
+          <div class="wf-result"><span class="result-label">Après</span><span>Un seul contenu source produit 5 formats publiables. Le temps de création est divisé par 3.</span></div>
+          <ul class="wf-tools" aria-label="Outils utilisés">
+            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
+            <li><svg class="logo" style="color:#D97757" aria-hidden="true"><use href="#i-claude"/></svg>Claude/GPT</li>
+            <li><svg class="logo" style="color:#111" aria-hidden="true"><use href="#i-notion"/></svg>Buffer/Notion</li>
+            <li><span class="logo-text" aria-hidden="true">⚡</span>Webhook</li>
+          </ul>
+          <a class="wf-download" href="./workflows/recyclage-contenu.json" download="recyclage-contenu.json">
+            Télécharger le modèle n8n <span aria-hidden="true">↓</span>
+          </a>
+        </footer>
+      </article>
+
+      <!-- WORKFLOW 3 : PRÉ-SCREENING RH -->
+      <article class="wf-card" aria-label="Workflow : pré-screening RH et planification d'entretiens">
+        <header class="wf-header">
+          <span class="wf-industry">RH · Cabinets de recrutement · Équipes en croissance</span>
+          <h3>100 candidatures reçues.<br>Les profils pertinents sont identifiés avant le café.</h3>
+          <p class="wf-problem">Avant : trier 100 CV prend 4 à 6 heures. Les bonnes candidatures attendent parfois une semaine avant d'être contactées.</p>
+        </header>
+        <ol class="wf-steps" aria-label="Étapes du workflow">
+          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📥</span><div><strong>Déclenchement</strong><span>Un candidat soumet sa candidature (formulaire, job board, email). Le workflow s'active immédiatement.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🧾</span><div><strong>Extraction du profil</strong><span>n8n analyse le CV et la lettre : expériences, compétences, formation, mobilité. Les données sont structurées automatiquement.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">⚖️</span><div><strong>Analyse par critères</strong><span>Un agent IA compare le profil aux critères définis pour le poste (must-have, nice-to-have, éliminatoires). Il produit un résumé structuré — jamais une décision définitive.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">✉️</span><div><strong>Accusé de réception</strong><span>Un email personnalisé est envoyé au candidat dès la réception : confirmation, délai de réponse estimé, prochain contact.</span></div></li>
+          <li class="wf-step"><span class="step-icon" aria-hidden="true">🗂️</span><div><strong>Dossier recruteur</strong><span>La fiche candidat est créée dans Airtable avec le résumé IA, le score de correspondance et les questions suggérées pour l'entretien.</span></div></li>
+          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le recruteur lit le résumé, décide, puis planifie l'entretien depuis la fiche. L'outil prépare, l'humain décide.</span></div></li>
+        </ol>
+        <footer class="wf-footer">
+          <div class="wf-result"><span class="result-label">Après</span><span>6 heures de tri → 45 minutes de lecture et de décision. Aucun bon profil perdu dans la pile.</span></div>
+          <ul class="wf-tools" aria-label="Outils utilisés">
+            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
+            <li><svg class="logo" style="color:#D97757" aria-hidden="true"><use href="#i-claude"/></svg>Claude/GPT</li>
             <li><svg class="logo" style="color:#18BFFF" aria-hidden="true"><use href="#i-airtable"/></svg>Airtable</li>
             <li><span class="logo-text" aria-hidden="true">✉</span>Email</li>
-            <li><span class="logo-text" aria-hidden="true">💬</span>Slack</li>
           </ul>
-          <a class="wf-download" href="./workflows/devis-entrant.json" download="devis-entrant.json">
-            Télécharger le modèle n8n <span aria-hidden="true">↓</span>
-          </a>
-        </footer>
-      </article>
-
-      <!-- WORKFLOW 2 : ONBOARDING COLLABORATEUR -->
-      <article class="wf-card" aria-label="Workflow : onboarding d'un nouveau collaborateur">
-        <header class="wf-header">
-          <span class="wf-industry">PME · Startups · Cabinets</span>
-          <h3>Un collaborateur arrive lundi.<br>Tout est prêt le vendredi.</h3>
-          <p class="wf-problem">Avant : 45 minutes de configuration manuelle par arrivée, des accès oubliés, un manager débordé le jour J.</p>
-        </header>
-        <ol class="wf-steps" aria-label="Étapes du workflow">
-          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📋</span><div><strong>Déclenchement</strong><span>Le RH valide le formulaire d'arrivée : nom, poste, date de début, outils à créer.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">👤</span><div><strong>Création des accès</strong><span>Les comptes sont créés ou provisionnés : email professionnel, accès Slack, espace Notion de l'équipe.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">📩</span><div><strong>Email de bienvenue</strong><span>Un email est envoyé au nouveau collaborateur avec ses identifiants, les liens utiles et le programme de sa première semaine.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">📝</span><div><strong>Checklist manager</strong><span>Une liste de tâches est créée automatiquement dans Notion pour le N+1 : présentation équipe, accès matériel, points à planifier.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">📅</span><div><strong>Invitations agenda</strong><span>Les réunions de démarrage (accueil RH, café manager, réunion d'équipe) sont créées et envoyées automatiquement.</span></div></li>
-          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le manager reçoit un récap 48h avant l'arrivée : il vérifie, ajuste, et accueille. L'outil prépare, l'humain accueille.</span></div></li>
-        </ol>
-        <footer class="wf-footer">
-          <div class="wf-result"><span class="result-label">Après</span><span>5 minutes de vérification. Plus d'accès oublié, plus de manager débordé le lundi matin.</span></div>
-          <ul class="wf-tools" aria-label="Outils utilisés">
-            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
-            <li><svg class="logo" style="color:#111" aria-hidden="true"><use href="#i-notion"/></svg>Notion</li>
-            <li><span class="logo-text" aria-hidden="true">📅</span>Agenda</li>
-            <li><span class="logo-text" aria-hidden="true">💬</span>Slack</li>
-          </ul>
-          <a class="wf-download" href="./workflows/onboarding-collaborateur.json" download="onboarding-collaborateur.json">
-            Télécharger le modèle n8n <span aria-hidden="true">↓</span>
-          </a>
-        </footer>
-      </article>
-
-      <!-- WORKFLOW 3 : AVIS GOOGLE -->
-      <article class="wf-card" aria-label="Workflow : gestion des avis Google">
-        <header class="wf-header">
-          <span class="wf-industry">Restaurants · Cliniques · Commerces · Hôtels</span>
-          <h3>Un avis négatif arrive.<br>Le responsable est alerté avant de l'avoir vu.</h3>
-          <p class="wf-problem">Avant : des avis passés inaperçus pendant des jours, des réponses tardives, une réputation qui se dégrade en silence.</p>
-        </header>
-        <ol class="wf-steps" aria-label="Étapes du workflow">
-          <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📡</span><div><strong>Déclenchement</strong><span>Un nouvel avis apparaît sur la fiche Google My Business. Le workflow se déclenche automatiquement.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">⭐</span><div><strong>Lecture du score</strong><span>n8n lit la note : inférieure à 3 étoiles → voie urgente. 4 ou 5 étoiles → voie positive.</span></div></li>
-          <li class="wf-step branch-neg"><span class="step-icon" aria-hidden="true">🚨</span><div><strong>Alerte urgente <span class="branch-tag">&lt; 3 ★</span></strong><span>SMS + email envoyés au responsable dans la minute. Un brouillon de réponse est préparé, prêt à être ajusté.</span></div></li>
-          <li class="wf-step branch-pos"><span class="step-icon" aria-hidden="true">💬</span><div><strong>Remerciement <span class="branch-tag pos">≥ 4 ★</span></strong><span>Un email de remerciement personnalisé est préparé. Le responsable valide avant envoi — jamais automatique.</span></div></li>
-          <li class="wf-step"><span class="step-icon" aria-hidden="true">📊</span><div><strong>Enregistrement</strong><span>Chaque avis est logué dans Airtable : date, note, texte, statut de réponse. Le suivi devient visible.</span></div></li>
-          <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>C'est toujours le responsable qui publie la réponse. L'outil prépare, l'humain signe.</span></div></li>
-        </ol>
-        <footer class="wf-footer">
-          <div class="wf-result"><span class="result-label">Après</span><span>Aucun avis sans réponse dans les 24h. Les avis négatifs gérés avant que personne d'autre ne les lise.</span></div>
-          <ul class="wf-tools" aria-label="Outils utilisés">
-            <li><svg class="logo" style="color:#EA4B71" aria-hidden="true"><use href="#i-n8n"/></svg>n8n</li>
-            <li><svg class="logo" style="color:#18BFFF" aria-hidden="true"><use href="#i-airtable"/></svg>Airtable</li>
-            <li><span class="logo-text" aria-hidden="true">★</span>Google</li>
-            <li><span class="logo-text" aria-hidden="true">📱</span>SMS</li>
-          </ul>
-          <a class="wf-download" href="./workflows/avis-google.json" download="avis-google.json">
+          <a class="wf-download" href="./workflows/prescreening-rh.json" download="prescreening-rh.json">
             Télécharger le modèle n8n <span aria-hidden="true">↓</span>
           </a>
         </footer>
