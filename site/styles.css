@@ -214,3 +214,67 @@
   .wf-grid { grid-template-columns: 1fr; }
   .wf-card { padding: 1.5rem; }
 }
+
+.wf-download {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: #4a3f2f;
+  border: 1.5px solid #c8c3b8;
+  border-radius: .5rem;
+  padding: .45rem .9rem;
+  text-decoration: none;
+  transition: background .15s, border-color .15s;
+  width: fit-content;
+}
+.wf-download:hover { background: #f6f5f0; border-color: #4a3f2f; }
+
+/* ── MÉTHODE / PROCESS ──────────────────────────────── */
+.process-section { padding-block: 5rem; }
+
+.process-steps {
+  list-style: none;
+  padding: 0;
+  margin: 2.5rem 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.process-step {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  padding: 1.75rem;
+  background: #fff;
+  border: 1px solid #e8e6df;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.ps-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #e8e6df;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ps-body h3 {
+  font-size: 1.05rem;
+  margin: 0 0 .35rem;
+  color: #1a1410;
+}
+
+.ps-body p {
+  font-size: .87rem;
+  color: #5a4e3a;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .process-steps { grid-template-columns: 1fr; }
+}

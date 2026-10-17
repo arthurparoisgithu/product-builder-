@@ -23,7 +23,7 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     page.keyboard.press('Enter')
     assert page.evaluate("document.activeElement.id") == 'main'
     # Structure : hero, services, preuves, workflows concrets, profil, contact
-    for section_id in ('accueil', 'services', 'workflows', 'profil', 'contact'):
+    for section_id in ('accueil', 'services', 'methode', 'workflows', 'profil', 'contact'):
         assert page.locator(f'#{section_id}').count() == 1, section_id
     for removed in ('demo', 'impact', 'video', 'realisations'):
         assert page.locator(f'#{removed}').count() == 0, removed
@@ -37,6 +37,13 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
         assert card.locator('.wf-step').count() == 6
         assert card.locator('.wf-step.trigger').count() == 1 and card.locator('.wf-step.human').count() == 1
     assert page.locator('a[href^="mailto:"]').count() >= 3
+    assert page.locator('#methode .process-step').count() == 4
+    assert page.locator('nav a[href="#methode"]').count() == 0
+    assert page.evaluate("document.querySelector('#services').compareDocumentPosition(document.querySelector('#methode')) & 4")
+    assert page.evaluate("document.querySelector('#methode').compareDocumentPosition(document.querySelector('#workflows')) & 4")
+    downloads = page.locator('#workflows .wf-card .wf-footer a.wf-download[download]')
+    assert downloads.count() == 3
+    assert [downloads.nth(i).get_attribute('href') for i in range(3)] == ['./workflows/prospect-research.json', './workflows/follow-up-drafts.json', './workflows/meeting-actions.json']
     assert page.locator('svg use[href="#i-n8n"]').count() >= 1
     assert page.evaluate("document.querySelector('#i-n8n path').getAttribute('d').length > 50")
     page.locator('nav a[href="#workflows"]').click()
