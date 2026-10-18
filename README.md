@@ -57,3 +57,5 @@ Ne pas placer de clés API dans les fichiers du site ou dans GitHub. Une future 
 ## Vidéo de présentation
 
 La section **Vidéo** (`#video`, juste avant le bandeau contact) affiche `site/assets/video/promo-30s.mp4` : une animation muette de 30 secondes (texte à l’écran, pas de voix), générée par rendu HTML/Canvas puis capturée en vidéo, qui pitche le problème (process manuels) et la solution (no-code + IA) plutôt qu’Arthur lui-même — cohérent avec le reste du site. Sous-titrée en dur, donc lisible même sans son. `promo-poster.jpg` sert d’image d’aperçu avant lecture. Ce n’est pas une vidéo face caméra ; si Arthur en tourne une plus tard, elle peut remplacer ce fichier ou s’ajouter à côté.
+
+Passe motion design (v2) : révélations de texte masquées (wipe) plutôt que simples fondus, easing avec léger rebond (overshoot) sur les pop-ins, montage à rythme croissant pendant la partie « agitation » (coupes de plus en plus courtes), flash + éclatement des particules au moment du pivot problème→solution, léger zoom caméra continu sur toute la durée, grain filmique et vignette en overlay. Toujours 1280×720, 25 fps, 30.000 s pile, sans son.
