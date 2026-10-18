@@ -56,4 +56,4 @@ Ne pas placer de clés API dans les fichiers du site ou dans GitHub. Une future 
 
 ## Vidéo de présentation
 
-La vidéo `site/assets/video/promo-30s.mp4` (générée avec l’IA) n’est plus affichée sur le site : le fichier reste dans le dépôt en attendant une vidéo face caméra d’Arthur. Pour l’intégrer, ajouter une section `<video>` dans `site/index.html`.
+La section **Vidéo** (`#video`, juste avant le bandeau contact) affiche `site/assets/video/promo-30s.mp4` : une animation muette de 30 secondes (texte à l’écran, pas de voix), générée par rendu HTML/Canvas puis capturée en vidéo, qui pitche le problème (process manuels) et la solution (no-code + IA) plutôt qu’Arthur lui-même — cohérent avec le reste du site. Sous-titrée en dur, donc lisible même sans son. `promo-poster.jpg` sert d’image d’aperçu avant lecture. Ce n’est pas une vidéo face caméra ; si Arthur en tourne une plus tard, elle peut remplacer ce fichier ou s’ajouter à côté.
