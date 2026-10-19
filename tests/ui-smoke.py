@@ -22,10 +22,10 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     page.locator('.skip').focus()
     page.keyboard.press('Enter')
     assert page.evaluate("document.activeElement.id") == 'main'
-    # Structure : hero, services, preuves, workflows concrets, profil, contact
-    for section_id in ('accueil', 'services', 'methode', 'workflows', 'profil', 'faq', 'contact'):
+    # Structure : hero (avec le profil), services, méthode, workflows concrets, FAQ, vidéo, contact
+    for section_id in ('accueil', 'services', 'methode', 'workflows', 'faq', 'video', 'contact'):
         assert page.locator(f'#{section_id}').count() == 1, section_id
-    for removed in ('demo', 'impact', 'video', 'realisations'):
+    for removed in ('demo', 'impact', 'profil', 'realisations'):
         assert page.locator(f'#{removed}').count() == 0, removed
     assert page.locator('a[href="#demo"], a[href="#impact"], a[href="#realisations"]').count() == 0
     assert page.locator('nav a[href="#workflows"]').inner_text() == 'Workflows'
@@ -44,21 +44,23 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     downloads = page.locator('#workflows .wf-card .wf-footer a.wf-download[download]')
     assert downloads.count() == 3
     assert [downloads.nth(i).get_attribute('href') for i in range(3)] == ['./workflows/qualification-leads-b2b.json', './workflows/recyclage-contenu.json', './workflows/prescreening-rh.json']
-    # CV téléchargeable (hero, CTA workflows, contact), CTA workflows et FAQ
+    # CV téléchargeable (hero, contact) et FAQ
     cv = page.locator('a[href="./assets/cv-arthur-parois.pdf"][download]')
-    assert cv.count() == 3
-    for zone in ('#accueil .hero2-actions', '#workflows .wf-cta', '#contact .contact-actions'):
+    assert cv.count() == 2
+    for zone in ('#accueil .hero2-actions', '#contact .contact-actions'):
         assert page.locator(f'{zone} a[href="./assets/cv-arthur-parois.pdf"][download]').count() == 1, zone
-    assert page.locator('#workflows .wf-cta a[href^="mailto:arthur270.parois@gmail.com"]').count() == 1
+    assert page.locator('#workflows .wf-cta').count() == 0
     assert page.locator('#faq details.faq-item > summary').count() == 5
     assert page.locator('nav a[href="#faq"]').count() == 0
-    assert page.evaluate("document.querySelector('#profil').compareDocumentPosition(document.querySelector('#faq')) & 4")
+    assert page.evaluate("document.querySelector('#workflows').compareDocumentPosition(document.querySelector('#faq')) & 4")
+    assert page.locator('nav a[href="#video"]').count() == 1
     assert page.evaluate("document.querySelector('#faq').compareDocumentPosition(document.querySelector('#contact')) & 4")
     first = page.locator('#faq details.faq-item').first
     assert not first.evaluate('d => d.open')
     first.locator('summary').click()
     assert first.evaluate('d => d.open') and first.locator('.faq-answer').is_visible()
-    assert page.locator('a[href*="linkedin"], video, source[src*="promo-30s"]').count() == 0
+    assert page.locator('a[href*="linkedin"], source[src*="promo-30s"]').count() == 0
+    assert page.locator('#video video source[src="./assets/video/promo-60s.mp4"]').count() == 1
     assert page.locator('svg use[href="#i-n8n"]').count() >= 1
     assert page.evaluate("document.querySelector('#i-n8n path').getAttribute('d').length > 50")
     page.locator('nav a[href="#workflows"]').click()
