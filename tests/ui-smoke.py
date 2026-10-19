@@ -44,12 +44,12 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     downloads = page.locator('#workflows .wf-card .wf-footer a.wf-download[download]')
     assert downloads.count() == 3
     assert [downloads.nth(i).get_attribute('href') for i in range(3)] == ['./workflows/qualification-leads-b2b.json', './workflows/recyclage-contenu.json', './workflows/prescreening-rh.json']
-    # CV téléchargeable (hero, CTA workflows, contact), CTA workflows et FAQ
+    # CV téléchargeable (hero, contact) et FAQ
     cv = page.locator('a[href="./assets/cv-arthur-parois.pdf"][download]')
-    assert cv.count() == 3
-    for zone in ('#accueil .hero2-actions', '#workflows .wf-cta', '#contact .contact-actions'):
+    assert cv.count() == 2
+    for zone in ('#accueil .hero2-actions', '#contact .contact-actions'):
         assert page.locator(f'{zone} a[href="./assets/cv-arthur-parois.pdf"][download]').count() == 1, zone
-    assert page.locator('#workflows .wf-cta a[href^="mailto:arthur270.parois@gmail.com"]').count() == 1
+    assert page.locator('#workflows .wf-cta').count() == 0
     assert page.locator('#faq details.faq-item > summary').count() == 5
     assert page.locator('nav a[href="#faq"]').count() == 0
     assert page.evaluate("document.querySelector('#profil').compareDocumentPosition(document.querySelector('#faq')) & 4")
