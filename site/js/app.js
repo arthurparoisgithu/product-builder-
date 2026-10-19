@@ -1,6 +1,6 @@
 // Interactions du portfolio : surlignage du lien de navigation correspondant à la section visible.
 // Les démos BriefOps et les simulateurs n8n ont été retirés au profit de la section statique #workflows.
-const sectionIds = ['services', 'methode', 'workflows', 'profil', 'contact'];
+const sectionIds = ['services', 'methode', 'workflows', 'video', 'contact'];
 const navLinks = document.querySelectorAll('.header nav a');
 
 if ('IntersectionObserver' in window && navLinks.length) {
