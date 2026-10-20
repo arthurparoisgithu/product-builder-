@@ -358,3 +358,18 @@ html.no-js .process-section .process-step{opacity:1!important;transform:none!imp
 .wf-scroller .wf-step.human{background:#eef5e3;border-color:#cfe0b8}
 .wf-scroller .step-icon{position:absolute;right:1rem;top:1rem;font-size:1.1rem}
 .wf-grid>.wf-card{min-width:0}
+
+/* ── CARROUSELS MOBILE (services + workflows) ─────────── */
+.carousel-dots{display:none}
+@media(max-width:700px){
+  .service-grid,.wf-grid{--g:38px;display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;margin-inline:calc(-1 * var(--g));padding:6px var(--g) 14px;scroll-padding-inline:var(--g);scrollbar-width:none}
+  .service-grid::-webkit-scrollbar,.wf-grid::-webkit-scrollbar{display:none}
+  .service-grid>.service-card,.wf-grid>.wf-card{flex:0 0 86%;scroll-snap-align:start;scroll-snap-stop:always}
+  .wf-grid{margin-block-start:2rem}
+  .carousel-dots{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:6px}
+  .carousel-dots button{width:8px;height:8px;padding:0;border:0;border-radius:99px;background:#c9cdbf;transition:width .25s,background .25s}
+  .carousel-dots button[aria-current=true]{width:22px;background:var(--blue)}
+  .carousel-hint{display:block;text-align:center;font-size:11px;color:var(--muted);margin:8px 0 0}
+}
+@media(max-width:560px){.service-grid,.wf-grid{--g:23px}}
+@media(min-width:701px){.carousel-hint{display:none}}
