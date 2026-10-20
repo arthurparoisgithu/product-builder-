@@ -61,6 +61,9 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     assert first.evaluate('d => d.open') and first.locator('.faq-answer').is_visible()
     assert page.locator('a[href*="linkedin"], source[src*="promo-30s"]').count() == 0
     assert page.locator('#video video source[src="./assets/video/promo-60s.mp4"]').count() == 1
+    assert page.locator('#video video source[src="./assets/video/presentation-arthur.mp4"]').count() == 1
+    # la section vidéos suit directement les workflows
+    assert page.evaluate("document.querySelector('#workflows').nextElementSibling.id === 'video'")
     assert page.locator('svg use[href="#i-n8n"]').count() >= 1
     assert page.evaluate("document.querySelector('#i-n8n path').getAttribute('d').length > 50")
     page.locator('nav a[href="#workflows"]').click()
