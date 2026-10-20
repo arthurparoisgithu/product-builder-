@@ -115,7 +115,10 @@
           <h3>Un prospect visite le site.<br>Il est qualifié et dans le CRM en deux minutes.</h3>
           <p class="wf-problem">Avant : chaque commercial passe 30 minutes à chercher les infos d'un prospect avant de décrocher le téléphone. La moitié sont perdues dans des tableurs.</p>
         </header>
-        <ol class="wf-steps" aria-label="Étapes du workflow">
+        <figure class="wf-visual"><img src="./assets/workflows/wf-leads.jpg" width="900" height="824" loading="lazy" decoding="async" alt="Schéma du workflow commercial : déclenchement, enrichissement automatique, scoring IA (87/100), fiche CRM créée, alerte Slack au commercial, point de contrôle humain."></figure>
+        <div class="wf-carousel">
+          <div class="wf-carousel-bar"><span>Les 6 étapes</span><span class="wf-carousel-nav"><button type="button" class="wf-prev" aria-label="Étape précédente">←</button><button type="button" class="wf-next" aria-label="Étape suivante">→</button></span></div>
+          <ol class="wf-steps wf-scroller" aria-label="Étapes du workflow, faites défiler" tabindex="0">
           <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📥</span><div><strong>Déclenchement</strong><span>Un formulaire de contact est soumis, ou un prospect est identifié via un outil de tracking (lemlist, Clay, formulaire web).</span></div></li>
           <li class="wf-step"><span class="step-icon" aria-hidden="true">🔍</span><div><strong>Enrichissement automatique</strong><span>n8n interroge des sources publiques pour compléter le profil : secteur, taille de l'entreprise, poste du contact, technologies utilisées.</span></div></li>
           <li class="wf-step"><span class="step-icon" aria-hidden="true">🎯</span><div><strong>Scoring IA</strong><span>Un modèle de langage analyse le profil et attribue un score de correspondance avec les critères ICP (Ideal Customer Profile) de l'entreprise.</span></div></li>
@@ -123,6 +126,7 @@
           <li class="wf-step"><span class="step-icon" aria-hidden="true">🔔</span><div><strong>Alerte commerciale</strong><span>Le commercial reçoit une notification Slack avec un résumé du profil et le score de qualification. Il sait en 10 secondes s'il rappelle.</span></div></li>
           <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>C'est le commercial qui décide de contacter. L'outil qualifie, l'humain vend.</span></div></li>
         </ol>
+        </div>
         <footer class="wf-footer">
           <div class="wf-result"><span class="result-label">Après</span><span>30 minutes de recherche manuelle → 2 minutes de lecture. Les commerciaux passent plus de temps à vendre, moins à chercher.</span></div>
           <ul class="wf-tools" aria-label="Outils utilisés">
@@ -144,7 +148,10 @@
           <h3>Un article est publié.<br>Cinq formats sont prêts pour les réseaux en dix minutes.</h3>
           <p class="wf-problem">Avant : un article de blog demande 2 heures d'écriture, puis 3 heures supplémentaires pour adapter le contenu à chaque canal. Résultat : LinkedIn et les newsletters sont souvent abandonnés.</p>
         </header>
-        <ol class="wf-steps" aria-label="Étapes du workflow">
+        <figure class="wf-visual"><img src="./assets/workflows/wf-contenu.jpg" width="900" height="880" loading="lazy" decoding="async" alt="Schéma du workflow marketing : un article publié passe par un agent IA qui produit cinq formats (post LinkedIn, thread court, newsletter, script vidéo, résumé email), puis un humain valide."></figure>
+        <div class="wf-carousel">
+          <div class="wf-carousel-bar"><span>Les 6 étapes</span><span class="wf-carousel-nav"><button type="button" class="wf-prev" aria-label="Étape précédente">←</button><button type="button" class="wf-next" aria-label="Étape suivante">→</button></span></div>
+          <ol class="wf-steps wf-scroller" aria-label="Étapes du workflow, faites défiler" tabindex="0">
           <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📡</span><div><strong>Déclenchement</strong><span>Un nouvel article est publié sur le blog (webhook Wordpress, Webflow, ou RSS). Le workflow s'active automatiquement.</span></div></li>
           <li class="wf-step"><span class="step-icon" aria-hidden="true">📄</span><div><strong>Extraction du contenu</strong><span>n8n extrait le texte complet de l'article : titre, sous-titres, points clés, conclusion.</span></div></li>
           <li class="wf-step"><span class="step-icon" aria-hidden="true">✍️</span><div><strong>Adaptation par format</strong><span>Un agent IA génère 5 versions : post LinkedIn (accroche + corps + CTA), thread court, newsletter, script vidéo courte, et résumé email.</span></div></li>
@@ -152,6 +159,7 @@
           <li class="wf-step"><span class="step-icon" aria-hidden="true">🗓️</span><div><strong>Mise en file d'attente</strong><span>Les contenus sont déposés dans l'outil de planification (Buffer, Later, Notion) avec les dates de publication suggérées.</span></div></li>
           <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le responsable marketing relit et valide avant publication. L'outil prépare, l'humain signe.</span></div></li>
         </ol>
+        </div>
         <footer class="wf-footer">
           <div class="wf-result"><span class="result-label">Après</span><span>Un seul contenu source produit 5 formats publiables. Le temps de création est divisé par 3.</span></div>
           <ul class="wf-tools" aria-label="Outils utilisés">
@@ -173,7 +181,10 @@
           <h3>100 candidatures reçues.<br>Les profils pertinents sont identifiés avant le café.</h3>
           <p class="wf-problem">Avant : trier 100 CV prend 4 à 6 heures. Les bonnes candidatures attendent parfois une semaine avant d'être contactées.</p>
         </header>
-        <ol class="wf-steps" aria-label="Étapes du workflow">
+        <figure class="wf-visual"><img src="./assets/workflows/wf-rh.jpg" width="900" height="895" loading="lazy" decoding="async" alt="Schéma du workflow RH : 100 candidatures reçues, 12 correspondent aux critères ; un résumé IA est prêt et c'est le recruteur qui décide."></figure>
+        <div class="wf-carousel">
+          <div class="wf-carousel-bar"><span>Les 6 étapes</span><span class="wf-carousel-nav"><button type="button" class="wf-prev" aria-label="Étape précédente">←</button><button type="button" class="wf-next" aria-label="Étape suivante">→</button></span></div>
+          <ol class="wf-steps wf-scroller" aria-label="Étapes du workflow, faites défiler" tabindex="0">
           <li class="wf-step trigger"><span class="step-icon" aria-hidden="true">📥</span><div><strong>Déclenchement</strong><span>Un candidat soumet sa candidature (formulaire, job board, email). Le workflow s'active immédiatement.</span></div></li>
           <li class="wf-step"><span class="step-icon" aria-hidden="true">🧾</span><div><strong>Extraction du profil</strong><span>n8n analyse le CV et la lettre : expériences, compétences, formation, mobilité. Les données sont structurées automatiquement.</span></div></li>
           <li class="wf-step"><span class="step-icon" aria-hidden="true">⚖️</span><div><strong>Analyse par critères</strong><span>Un agent IA compare le profil aux critères définis pour le poste (must-have, nice-to-have, éliminatoires). Il produit un résumé structuré — jamais une décision définitive.</span></div></li>
@@ -181,6 +192,7 @@
           <li class="wf-step"><span class="step-icon" aria-hidden="true">🗂️</span><div><strong>Dossier recruteur</strong><span>La fiche candidat est créée dans Airtable avec le résumé IA, le score de correspondance et les questions suggérées pour l'entretien.</span></div></li>
           <li class="wf-step human"><span class="step-icon" aria-hidden="true">✅</span><div><strong>Point de contrôle humain</strong><span>Le recruteur lit le résumé, décide, puis planifie l'entretien depuis la fiche. L'outil prépare, l'humain décide.</span></div></li>
         </ol>
+        </div>
         <footer class="wf-footer">
           <div class="wf-result"><span class="result-label">Après</span><span>6 heures de tri → 45 minutes de lecture et de décision. Aucun bon profil perdu dans la pile.</span></div>
           <ul class="wf-tools" aria-label="Outils utilisés">

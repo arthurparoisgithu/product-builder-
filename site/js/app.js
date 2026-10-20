@@ -56,3 +56,16 @@ if (mailLinks.length && navigator.clipboard) {
     });
   });
 }
+
+// Workflows : flèches pour faire défiler les étapes
+document.querySelectorAll('.wf-carousel').forEach(c => {
+  const list = c.querySelector('.wf-scroller');
+  const prev = c.querySelector('.wf-prev'), next = c.querySelector('.wf-next');
+  if (!list || !prev || !next) return;
+  const step = () => (list.querySelector('.wf-step')?.getBoundingClientRect().width || 240) + 12;
+  const sync = () => { prev.disabled = list.scrollLeft < 4; next.disabled = list.scrollLeft + list.clientWidth >= list.scrollWidth - 4; };
+  prev.addEventListener('click', () => list.scrollBy({ left: -step() }));
+  next.addEventListener('click', () => list.scrollBy({ left: step() }));
+  list.addEventListener('scroll', sync, { passive: true });
+  sync();
+});
