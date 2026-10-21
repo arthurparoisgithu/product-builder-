@@ -23,7 +23,7 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     page.keyboard.press('Enter')
     assert page.evaluate("document.activeElement.id") == 'main'
     # Structure : hero (avec le profil), services, méthode, workflows concrets, FAQ, vidéo, contact
-    for section_id in ('accueil', 'services', 'methode', 'workflows', 'faq', 'video', 'contact'):
+    for section_id in ('accueil', 'services', 'methode', 'workflows', 'video', 'contact'):
         assert page.locator(f'#{section_id}').count() == 1, section_id
     for removed in ('demo', 'impact', 'profil', 'realisations'):
         assert page.locator(f'#{removed}').count() == 0, removed
@@ -50,15 +50,8 @@ with sync_playwright() as playwright, TemporaryDirectory() as temp:
     for zone in ('#accueil .hero2-actions', '#contact .contact-actions'):
         assert page.locator(f'{zone} a[href="./assets/cv-arthur-parois.pdf"][download]').count() == 1, zone
     assert page.locator('#workflows .wf-cta').count() == 0
-    assert page.locator('#faq details.faq-item > summary').count() == 5
-    assert page.locator('nav a[href="#faq"]').count() == 0
-    assert page.evaluate("document.querySelector('#workflows').compareDocumentPosition(document.querySelector('#faq')) & 4")
+    assert page.locator('#faq').count() == 0
     assert page.locator('nav a[href="#video"]').count() == 1
-    assert page.evaluate("document.querySelector('#faq').compareDocumentPosition(document.querySelector('#contact')) & 4")
-    first = page.locator('#faq details.faq-item').first
-    assert not first.evaluate('d => d.open')
-    first.locator('summary').click()
-    assert first.evaluate('d => d.open') and first.locator('.faq-answer').is_visible()
     assert page.locator('a[href*="linkedin"], source[src*="promo-30s"]').count() == 0
     assert page.locator('#video video source[src="./assets/video/promo-60s.mp4"]').count() == 1
     assert page.locator('#video video source[src="./assets/video/presentation-arthur.mp4"]').count() == 1
