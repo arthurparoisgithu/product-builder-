@@ -301,3 +301,23 @@ html.no-js .process-section .process-step{opacity:1!important;transform:none!imp
 }
 @media(max-width:560px){.service-grid,.wf-grid{--g:23px}}
 @media(min-width:701px){.carousel-hint{display:none}}
+
+/* ── Confort mobile : header compact, zones tactiles ≥ 40px ── */
+@media(max-width:560px){
+  html{scroll-padding-top:96px}
+  .header{height:auto;min-height:0;padding:8px 16px 0;gap:2px}
+  .header .brand{font-size:14px;gap:10px}
+  .header .brand small{display:none}
+  .header .brand-photo{width:34px;height:34px}
+  .header nav{gap:0;font-size:13px;justify-content:space-between}
+  .header nav a{padding:12px 6px;min-height:44px;display:inline-flex;align-items:center}
+  .carousel-dots{gap:2px}
+  .carousel-dots button{box-sizing:content-box;border:12px solid transparent;background-clip:padding-box}
+  .wf-carousel-nav button{width:2.6rem;height:2.6rem}
+  .footer .brand small{font-size:10px;letter-spacing:.1em}
+  .hero2-phone{display:inline-flex;align-items:center;min-height:44px}
+  .footer>div a{display:inline-flex;align-items:center;min-height:44px}
+  .wf-section{padding-block:3.5rem}
+  .services{padding-top:48px;padding-bottom:40px}
+  .video-section{padding-top:48px;padding-bottom:48px}
+}
