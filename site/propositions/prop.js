@@ -152,7 +152,7 @@
     film.setAttribute('data-theme', s.dataset.theme || 'dark');
     idx = i;
     if(off > 0.05 && s.getAnimations){
-      void getComputedStyle(s).opacity;
+      void s.offsetHeight; void getComputedStyle(s).opacity;
       s.getAnimations({subtree: true}).forEach(function(an){ try{ an.currentTime = off * 1000; }catch(e){} });
     }
   }
@@ -205,7 +205,9 @@
   function seek(t){
     t = Math.min(Math.max(t, 0), total - 0.01);
     base = t; anchor = performance.now(); idx = -1;
+    film.classList.add('nofade');
     syncAudio(t); render(t);
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ film.classList.remove('nofade'); }); });
   }
   function toggleSound(){
     var t = now();
@@ -248,6 +250,7 @@
     });
   }
 
+  film.__seek = function(t){ seek(t); }; film.__now = now;
   if(reduce){
     var g = scenes.findIndex(function(s){ return s.classList.contains('gains'); });
     seek(g >= 0 ? starts[g] + durs[g] - .1 : 0);
