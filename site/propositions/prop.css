@@ -1204,3 +1204,66 @@ sup{font-size:9.5px;font-weight:700;color:var(--blue);background:var(--accent-so
 .pan-bout .bar i{background:#b9725e}
 .pan-bout .rl em{background:#e2cf8e}
 .pan-bout .rl b{background:#4f8a6e}
+
+/* ================= Barre de lecture + son ================= */
+.scrub{display:flex;align-items:center;gap:12px;margin-top:14px;padding:8px 12px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 24px -18px rgba(31,36,31,.35)}
+.scrub button{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:13px;cursor:pointer}
+.scrub button:hover{border-color:var(--blue);color:var(--blue)}
+.sc-play{background:var(--ink)!important;color:#fff!important;border-color:var(--ink)!important}
+.sc-t{flex:none;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:82px}
+.sc-t b{color:var(--ink)}
+.sc-track{position:relative;flex:1;height:22px;cursor:pointer;touch-action:none;outline:none}
+.sc-track::before{content:"";position:absolute;left:0;right:0;top:8px;height:6px;border-radius:6px;background:#e3e5dc}
+.sc-fill{position:absolute;left:0;top:8px;height:6px;border-radius:6px;background:var(--blue);width:0;pointer-events:none}
+.sc-segs{position:absolute;inset:0;z-index:2;pointer-events:none}
+.sc-segs i{position:absolute;top:6px;height:10px;border-left:3px solid #fff}
+.sc-segs i:first-child{border-left:0}
+.sc-knob{position:absolute;top:4px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#fff;border:3px solid var(--blue);box-shadow:0 2px 6px rgba(41,75,255,.35);z-index:3;pointer-events:none;transition:transform .15s}
+.sc-track:hover .sc-knob,.sc-track.drag .sc-knob,.sc-track:focus-visible .sc-knob{transform:scale(1.25)}
+.sc-track:focus-visible::before{box-shadow:0 0 0 3px rgba(41,75,255,.25)}
+.sc-tip{position:absolute;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;font-weight:600;white-space:nowrap;border-radius:8px;padding:4px 9px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:4}
+.sc-tip.on{opacity:1}
+.sc-sound{font-size:15px!important}
+.film-sound{position:absolute;top:30px;right:20px;z-index:6;display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.42);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;font:inherit;font-size:13px;font-weight:700;border-radius:99px;padding:7px 14px 7px 10px;cursor:pointer}
+.fs-ic{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--lime);color:#1f241f;font-size:12px;animation:fsPulse 1.8s ease-in-out infinite}
+@keyframes fsPulse{0%,100%{box-shadow:0 0 0 0 rgba(219,239,168,.6)}50%{box-shadow:0 0 0 7px rgba(219,239,168,0)}}
+.film.sound-on .film-sound{background:rgba(0,0,0,.25);opacity:.75}
+.film.sound-on .fs-ic{animation:none}
+.film[data-theme=light] .film-sound{background:rgba(255,255,255,.75);color:#1f241f;border-color:rgba(31,36,31,.18)}
+@media (max-width:640px){
+  .scrub{gap:8px;padding:6px 8px}
+  .sc-t{min-width:0;font-size:12px}
+  .sc-t span{display:none}
+  .film-sound{top:auto;bottom:16px;left:14px;right:auto}
+}
+@media (prefers-reduced-motion:reduce){.fs-ic{animation:none}}
+
+/* ================= Aftermovie : variantes Galopins / Bateaux Nantais ================= */
+.pan-bvid.v-gal{background:radial-gradient(90% 80% at 50% 0%,#232326,#0f0f10 70%);color:#ececec}
+.pan-bvid.v-gal .pan-n{font-family:var(--serif);font-weight:400;letter-spacing:0;color:#ff7a3d}
+.pan-bvid.v-gal .pan-k{color:#ff9e6d}
+.pan-bvid.v-gal .pan-t,.pan-bvid.v-bn .pan-t{font-family:var(--serif);font-weight:400;text-transform:none;letter-spacing:-.01em;font-size:clamp(19px,3.1cqw,36px)}
+.pan-bvid.v-gal .ti{border-color:#000;box-shadow:0 0 0 1px #333,5px 5px 0 rgba(255,122,61,.16);border-radius:6px}
+.pan-bvid.v-gal .ev{background:radial-gradient(60% 55% at 50% 100%,#1d5b8c,#0e2a47 60%,#08131f)}
+.pan-bvid.v-gal .spot{background:conic-gradient(from 160deg at 50% 0%,transparent 0deg,rgba(255,179,138,.42) 20deg,transparent 40deg)}
+.pan-bvid.v-gal .play,.pan-bvid.v-gal .cc{background:#ff7a3d;color:#111}
+.pan-bvid.v-gal .ktx.s,.pan-bvid.v-gal .tz{color:#ffb38a}
+.pan-bvid.v-gal .t-quote .ti{background:#e98a5c}
+.pan-bvid.v-gal .fmt{color:#a8a8ad;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:none;letter-spacing:0}
+.pan-bvid.v-gal .bv-side b{color:#ff7a3d;font-family:var(--serif);font-weight:400;letter-spacing:0}
+.pan-bvid.v-gal .bv-tag{background:#1a1a1c;color:#ececec;border:1px solid #2c2c30;box-shadow:4px 4px 0 rgba(255,122,61,.3)}
+.pan-bvid.v-bn{background:linear-gradient(180deg,#2e1d47 0%,#6e3460 55%,#c45e5a 78%,#2b1d3b 78.3%,#1a1329 100%);color:#fff6ea}
+.pan-bvid.v-bn .pan-n{font-family:var(--serif);font-weight:400;letter-spacing:0;color:#ffd27a}
+.pan-bvid.v-bn .pan-k{color:#ffe1b0}
+.pan-bvid.v-bn .ti{border-color:rgba(255,255,255,.9);border-radius:12px;box-shadow:0 18px 30px -16px rgba(30,10,40,.8)}
+.pan-bvid.v-bn .ev{background:linear-gradient(180deg,#5b2f72,#d4566c 50%,#ff9b62 66%,#2b1d3b 66.5%,#1b1430)}
+.pan-bvid.v-bn .spot{background:conic-gradient(from 160deg at 50% 0%,transparent 0deg,rgba(255,226,160,.45) 20deg,transparent 40deg)}
+.pan-bvid.v-bn .crowd{opacity:.85}
+.pan-bvid.v-bn .play,.pan-bvid.v-bn .cc{background:#ffd27a;color:#3b2559}
+.pan-bvid.v-bn .ktx{font-family:var(--serif);font-weight:400;letter-spacing:0}
+.pan-bvid.v-bn .ktx.s,.pan-bvid.v-bn .tz{color:#ffd27a}
+.pan-bvid.v-bn .t-quote .ti{background:#ffe1b0}
+.pan-bvid.v-bn .fmt{color:#ffe1b0}
+.pan-bvid.v-bn .bv-side b{color:#ffd27a;font-family:var(--serif);font-weight:400;letter-spacing:0}
+.pan-bvid.v-bn .bv-side span{color:#fff6ea}
+.pan-bvid.v-bn .bv-tag{background:rgba(29,21,48,.7);color:#fff6ea;border:1px solid rgba(255,214,140,.4);box-shadow:none;border-radius:99px}
