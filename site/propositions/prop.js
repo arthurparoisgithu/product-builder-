@@ -135,6 +135,7 @@
   }
   function show(i){
     scenes.forEach(function(s, k){ s.classList.toggle('active', k === i); });
+    film.setAttribute('data-theme', scenes[i].dataset.theme || 'dark');
     bars.forEach(function(b, k){ b.style.width = k < i ? '100%' : '0'; });
     countUp(scenes[i]);
     idx = i; start = performance.now(); elapsedAtPause = 0;
