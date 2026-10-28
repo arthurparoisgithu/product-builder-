@@ -1846,3 +1846,7 @@ sup{font-size:9.5px;font-weight:700;color:var(--blue);background:var(--accent-so
   .cx{max-width:88%}
 }
 .dvx-t td:nth-child(3){white-space:nowrap}
+
+/* Téléchargement du CV sous le film */
+.film-cv{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:16px}
+@media (max-width:640px){.film-cv .btn{width:100%;justify-content:center}}
