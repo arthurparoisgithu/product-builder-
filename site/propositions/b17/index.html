@@ -13,7 +13,7 @@
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../prop.css?v=3b419a2c">
+<link rel="stylesheet" href="../prop.css?v=3b99f3d1">
 </head>
 <body>
 <header class="topbar"><div class="wrap">
@@ -109,6 +109,7 @@
       <p>Arthur Parois · Marketing digital, IA &amp; product builder · alternance dès janvier 2027</p>
       <a class="btn btn-primary" href="https://calendly.com/arthur270-parois/30min" target="_blank" rel="noopener">Réservons 30 minutes ↗</a>
     </div>
+    <button type="button" class="vp-unmute" data-film="sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Activer le son</span></button>
     <div class="vp-big" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></div>
     <div class="vp">
       <div class="sc-track" role="slider" tabindex="0" aria-label="Position dans la vidéo" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
@@ -118,10 +119,12 @@
         <button type="button" class="vp-btn" data-film="play" aria-label="Pause"></button>
         <span class="sc-t"><b class="sc-cur">0:00</b> / <span class="sc-tot">0:00</span></span>
         <span class="vp-ch"></span>
+        <button type="button" class="vp-btn vp-vol" data-film="sound" aria-label="Activer le son"></button>
         <button type="button" class="vp-btn sc-full" data-film="full" aria-label="Plein écran"></button>
       </div>
     </div>
   </div>
+  <audio class="film-audio" preload="auto" loop src="musique.mp3?v=3b99f3d1"></audio>
   <button type="button" class="full-x" data-film="exitfull" aria-label="Quitter le plein écran">✕</button>
   <div class="film-cv"><a class="btn btn-primary" href="../../assets/cv-arthur-parois.pdf" download="cv-arthur-parois.pdf">Télécharger mon CV (PDF) <span aria-hidden="true">↓</span></a><a class="btn btn-ghost" href="https://calendly.com/arthur270-parois/30min" target="_blank" rel="noopener">Réserver 30 minutes ↗</a></div>
 </div></div>
@@ -250,6 +253,6 @@
 </main>
 
 <footer><div class="wrap"><span>Page préparée par Arthur Parois pour B17, à partir d'informations publiques. Page indépendante, sans lien officiel avec B17.</span><span>Octobre 2026</span></div></footer>
-<script src="../prop.js?v=3b419a2c"></script>
+<script src="../prop.js?v=3b99f3d1"></script>
 </body>
 </html>

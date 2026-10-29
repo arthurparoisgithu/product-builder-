@@ -375,7 +375,7 @@ sup{font-size:9.5px;font-weight:700;color:var(--blue);background:var(--accent-so
 /* ---------- Démo B : Audit GEO ---------- */
 .fld{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:10px}
 .fld label{font-size:12px;font-weight:600;color:var(--muted)}
-.in{border:1px solid #e1e3d9;border-radius:9px;padding:8px 11px;min-height:36px;font-weight:600;font-size:13px;background:#fff}
+.fld .in{border:1px solid #e1e3d9;border-radius:9px;padding:8px 11px;min-height:36px;font-weight:600;font-size:13px;background:#fff}
 .chips{display:flex;gap:6px;flex-wrap:wrap;min-height:36px;align-items:center}
 .chips span{font-size:12px;font-weight:600;background:var(--soft);border:1px solid #e1e3d9;border-radius:99px;padding:4px 10px;opacity:0;transform:scale(.85);transition:opacity .3s,transform .35s cubic-bezier(.3,1.6,.5,1)}
 .dm-b.s2 .chips span{opacity:1;transform:none;transition-delay:calc(var(--d)*.18s)}
@@ -1860,8 +1860,8 @@ sup{font-size:9.5px;font-weight:700;color:var(--blue);background:var(--accent-so
 @keyframes frTurn{0%,30%{transform:rotate(0)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}
 @media (pointer:coarse),(max-width:900px){.film-rotate{display:flex}}
 @media (prefers-reduced-motion:reduce){.fr-ic svg{animation:none}}
-html.film-lock,html.film-lock body{overflow:hidden!important;overscroll-behavior:none}
-.film-wrap.reveal.is-full{position:fixed;top:0;left:0;z-index:2147483000;margin:0;padding:0;background:#050605;opacity:1;transition:none;max-width:none;overflow:hidden;touch-action:none}
+html.film-lock,html.film-lock body{overflow:hidden!important;overscroll-behavior:none;background:#050605!important}
+.film-wrap.reveal.is-full{position:fixed;top:0;left:0;z-index:2147483000;margin:0;padding:0;background:#050605;opacity:1;transition:none;max-width:none;overflow:visible;touch-action:none}
 .film-wrap.is-full .film{--fu:1cqw;position:absolute;left:50%;top:0;aspect-ratio:auto;border-radius:0;box-shadow:none;transform-origin:50% 0}
 .film-wrap.is-full .film-cv,.film-wrap.is-full .film-rotate{display:none!important}
 .film-wrap.is-full .scrub{position:absolute;left:50%;bottom:8px;margin:0;transform:translateX(-50%);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.12);box-shadow:none;color:#eef0e8}
@@ -1915,3 +1915,15 @@ html.film-lock,html.film-lock body{overflow:hidden!important;overscroll-behavior
   .vp .sc-knob{transform:scale(1)}
 }
 @media (pointer:coarse){.vp .sc-knob{transform:scale(1)}.vp .sc-track{height:24px}.vp .sc-track::before,.vp .sc-fill{top:10px}.vp .sc-segs i{top:8px}.vp .sc-knob{top:6px}}
+
+/* Plein écran : aucun bord clair (zones de sécurité, barres du navigateur) */
+.film-wrap.is-full::before{content:"";position:absolute;left:-150vmax;top:-150vmax;width:400vmax;height:400vmax;background:#050605;z-index:-1;pointer-events:none}
+html.film-lock body>*:not(main):not(.film-wrap){visibility:hidden}
+/* Son discret */
+.vp-unmute{position:absolute;right:14px;top:14px;z-index:13;display:inline-flex;align-items:center;gap:7px;border:0;border-radius:99px;padding:7px 13px 7px 10px;background:rgba(8,10,8,.62);color:#fff;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:opacity .3s}
+.vp-unmute svg{width:17px;height:17px}
+.film.sound-on .vp-unmute{opacity:0;pointer-events:none}
+.film[data-theme=light] .vp-unmute{background:rgba(31,36,31,.72)}
+@media (max-width:640px){.film-wrap:not(.is-full) .vp-unmute{top:auto;bottom:74px;right:10px;font-size:12px}}
+.film-wrap.is-full .vp-unmute{right:66px;top:12px}
+.vp .sc-t span{display:inline!important}
