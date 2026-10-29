@@ -228,7 +228,7 @@
 
   if(track){
     var wasPlaying = false;
-    function ratio(e){ var r = track.getBoundingClientRect(); return Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1); }
+    function ratio(e){ var r = track.getBoundingClientRect(); var q = wrap.classList.contains('is-rot') ? (e.clientY - r.top) / r.height : (e.clientX - r.left) / r.width; return Math.min(Math.max(q, 0), 1); }
     function showTip(e){
       if(!tip) return; var q = ratio(e), t = q * total, i = sceneAt(t);
       tip.textContent = fmt(t) + ' · ' + (scenes[i].dataset.name || '');
@@ -249,6 +249,76 @@
       e.preventDefault();
     });
   }
+
+  // ----- Plein écran paysage (rotation CSS si le téléphone reste en portrait)
+  var scrubEl = wrap.querySelector('.scrub'), isFull = false, autoFull = false, nativeFull = false;
+  var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  function layout(){
+    if(!isFull) return;
+    var w = window.innerWidth, h = window.innerHeight, rot = h > w;
+    var AW = rot ? h : w, AH = rot ? w : h;
+    wrap.classList.toggle('is-rot', rot);
+    wrap.style.width = AW + 'px'; wrap.style.height = AH + 'px';
+    wrap.style.transformOrigin = 'top left';
+    wrap.style.transform = rot ? 'rotate(90deg) translateY(-100%)' : 'none';
+    var over = AH < 620, sh = (scrubEl && !over) ? scrubEl.offsetHeight + 14 : 0, pad = over ? 0 : (AW > 900 ? 24 : 8);
+    wrap.classList.toggle('sc-over', over);
+    var fitW = Math.max(200, Math.min(AW - 2 * pad, (AH - sh - pad) * 16 / 9));
+    var Lw = Math.max(720, fitW), s = fitW / Lw, fh = fitW * 9 / 16;
+    var top = Math.max(pad, (AH - sh - fh) / 2);
+    film.style.width = Lw + 'px'; film.style.height = (Lw * 9 / 16) + 'px';
+    film.style.marginLeft = (-Lw / 2) + 'px'; film.style.top = top + 'px';
+    film.style.transform = 'scale(' + s + ')';
+    if(scrubEl){ scrubEl.style.width = Math.max(fitW, Math.min(AW - 16, 520)) + 'px'; scrubEl.style.top = (over ? top + fh - scrubEl.offsetHeight - 8 : top + fh + 8) + 'px'; scrubEl.style.bottom = 'auto'; }
+  }
+  function lockLandscape(){ try{ if(screen.orientation && screen.orientation.lock){ var p = screen.orientation.lock('landscape'); if(p && p.catch) p.catch(function(){}); } }catch(e){} }
+  function enterFull(auto){
+    if(isFull) return;
+    isFull = true; autoFull = !!auto;
+    wrap.classList.add('is-full'); document.documentElement.classList.add('film-lock');
+    layout();
+    if(!auto){
+      var de = document.documentElement, rq = de.requestFullscreen || de.webkitRequestFullscreen;
+      if(rq){ try{ var p = rq.call(de, {navigationUI: 'hide'}); nativeFull = true; if(p && p.then) p.then(function(){ lockLandscape(); setTimeout(layout, 120); }).catch(function(){ nativeFull = false; }); else lockLandscape(); }catch(e){ nativeFull = false; } }
+    }
+    userPaused = false; seek(now()); play(); wake();
+    var x = wrap.querySelector('.full-x'); if(x) try{ x.focus({preventScroll: true}); }catch(e){}
+  }
+  function exitFull(){
+    if(!isFull) return;
+    isFull = false; autoFull = false;
+    wrap.classList.remove('is-full', 'is-rot', 'sc-over', 'idle'); document.documentElement.classList.remove('film-lock');
+    ['width', 'height', 'transform', 'transformOrigin'].forEach(function(k){ wrap.style[k] = ''; });
+    ['width', 'height', 'marginLeft', 'top', 'transform'].forEach(function(k){ film.style[k] = ''; });
+    if(scrubEl) ['width', 'top', 'bottom'].forEach(function(k){ scrubEl.style[k] = ''; });
+    var fe = document.fullscreenElement || document.webkitFullscreenElement;
+    if(fe){ try{ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }catch(e){} }
+    try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
+    nativeFull = false; seek(now());
+    setTimeout(function(){ try{ wrap.scrollIntoView({block: 'center'}); }catch(e){} }, 60);
+  }
+  var idleT = null;
+  function wake(){ wrap.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(function(){ if(isFull && !dragging) wrap.classList.add('idle'); }, 2800); }
+  ['pointerdown', 'pointermove', 'keydown'].forEach(function(ev){ wrap.addEventListener(ev, function(){ if(isFull) wake(); }); });
+  film.__full = enterFull; film.__exitFull = exitFull;
+  wrap.querySelectorAll('[data-film="full"]').forEach(function(b){ b.addEventListener('click', function(){ if(isFull) exitFull(); else enterFull(false); }); });
+  wrap.querySelectorAll('[data-film="exitfull"]').forEach(function(b){ b.addEventListener('click', exitFull); });
+  document.addEventListener('keydown', function(e){ if(isFull && e.key === 'Escape') exitFull(); });
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function(ev){ document.addEventListener(ev, function(){ if(isFull && nativeFull && !(document.fullscreenElement || document.webkitFullscreenElement)) exitFull(); else setTimeout(layout, 60); }); });
+  var ot = null, wasLand = window.innerWidth > window.innerHeight;
+  function onViewport(){
+    clearTimeout(ot);
+    ot = setTimeout(function(){
+      var land = window.innerWidth > window.innerHeight, turned = land && !wasLand; wasLand = land;
+      if(isFull){ if(autoFull && !land) exitFull(); else layout(); return; }
+      if(coarse && turned && !reduce){
+        var r = film.getBoundingClientRect(), vis = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+        if(vis > Math.min(r.height, window.innerHeight) * .3) enterFull(true);
+      }
+    }, 260);
+  }
+  window.addEventListener('resize', onViewport);
+  window.addEventListener('orientationchange', onViewport);
 
   film.__seek = function(t){ seek(t); }; film.__now = now;
   if(reduce){
