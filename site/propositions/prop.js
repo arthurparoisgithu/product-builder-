@@ -169,7 +169,7 @@
   function render(t){
     if(t >= total){ t = t % total; base = t; anchor = performance.now(); }
     var i = sceneAt(t);
-    if(i !== idx) activate(i, t - starts[i]);
+    if(i !== idx){ activate(i, t - starts[i]); if(chEl) chEl.textContent = scenes[i].dataset.name || ''; }
     var lt = t - starts[i];
     bars.forEach(function(b, k){ b.style.width = k < i ? '100%' : (k > i ? '0' : (lt / durs[i] * 100) + '%'); });
     counters(t);
@@ -181,8 +181,19 @@
   }
   (function loop(){ var t = now(); audioSync(t); render(t); requestAnimationFrame(loop); })();
 
+  var IC = {
+    play: '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 24 24"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z" fill="currentColor"/></svg>',
+    replay: '<svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z" fill="currentColor"/></svg>',
+    full: '<svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    unfull: '<svg viewBox="0 0 24 24"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  var chEl = wrap.querySelector('.vp-ch');
   function setBtns(){
-    wrap.querySelectorAll('[data-film="play"]').forEach(function(b){ b.textContent = playing ? '❚❚' : '▶'; b.setAttribute('aria-label', playing ? 'Pause' : 'Lecture'); });
+    wrap.querySelectorAll('[data-film="play"]').forEach(function(b){ b.innerHTML = playing ? IC.pause : IC.play; b.setAttribute('aria-label', playing ? 'Pause' : 'Lecture'); });
+    wrap.querySelectorAll('.sc-full').forEach(function(b){ var f = wrap.classList.contains('is-full'); b.innerHTML = f ? IC.unfull : IC.full; b.setAttribute('aria-label', f ? 'Quitter le plein écran' : 'Plein écran'); });
+    wrap.classList.toggle('vp-paused', !playing);
+    if(!playing){ wrap.classList.remove('idle'); var bg = film.querySelector('.vp-big'); if(bg){ bg.classList.remove('pop'); bg.innerHTML = IC.play; } }
     wrap.querySelectorAll('[data-film="sound"]').forEach(function(b){
       b.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
       if(b.classList.contains('sc-sound')){ b.textContent = soundOn ? '🔊' : '🔇'; b.setAttribute('aria-label', soundOn ? 'Couper le son' : 'Activer le son'); }
@@ -195,7 +206,7 @@
   function play(){
     if(playing) return;
     base = now(); anchor = performance.now(); playing = true; started = true;
-    syncAudio(base); setBtns();
+    syncAudio(base); setBtns(); wake();
   }
   function pause(){
     if(!playing) return;
@@ -281,7 +292,7 @@
       var de = document.documentElement, rq = de.requestFullscreen || de.webkitRequestFullscreen;
       if(rq){ try{ var p = rq.call(de, {navigationUI: 'hide'}); nativeFull = true; if(p && p.then) p.then(function(){ lockLandscape(); setTimeout(layout, 120); }).catch(function(){ nativeFull = false; }); else lockLandscape(); }catch(e){ nativeFull = false; } }
     }
-    userPaused = false; seek(now()); play(); wake();
+    userPaused = false; seek(now()); play(); setBtns(); wake();
     var x = wrap.querySelector('.full-x'); if(x) try{ x.focus({preventScroll: true}); }catch(e){}
   }
   function exitFull(){
@@ -294,12 +305,29 @@
     var fe = document.fullscreenElement || document.webkitFullscreenElement;
     if(fe){ try{ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }catch(e){} }
     try{ if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); }catch(e){}
-    nativeFull = false; seek(now());
+    nativeFull = false; seek(now()); setBtns();
     setTimeout(function(){ try{ wrap.scrollIntoView({block: 'center'}); }catch(e){} }, 60);
   }
   var idleT = null;
-  function wake(){ wrap.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(function(){ if(isFull && !dragging) wrap.classList.add('idle'); }, 2800); }
-  ['pointerdown', 'pointermove', 'keydown'].forEach(function(ev){ wrap.addEventListener(ev, function(){ if(isFull) wake(); }); });
+  function wake(){ wrap.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(function(){ if(playing && !dragging) wrap.classList.add('idle'); }, 2500); }
+  film.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse') wake(); });
+  film.addEventListener('pointerleave', function(e){ if(e.pointerType === 'mouse' && playing && !dragging){ clearTimeout(idleT); idleT = setTimeout(function(){ if(playing) wrap.classList.add('idle'); }, 600); } });
+  wrap.addEventListener('keydown', wake);
+  // Clic sur la vidéo : pause / lecture (souris) ; au doigt, le 1er toucher affiche les contrôles
+  film.addEventListener('click', function(e){
+    if(!e.target.isConnected || e.target.closest('.vp, a, button, .sc-track')) return;
+    var touch = e.pointerType === 'touch' || (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents);
+    if(touch && wrap.classList.contains('idle')){ wake(); return; }
+    if(playing){ userPaused = true; pause(); } else { userPaused = false; if(now() >= total - .05) seek(0); play(); }
+    flash(); wake();
+  });
+  var big = film.querySelector('.vp-big');
+  function flash(){ if(!big || !playing) return; big.innerHTML = IC.play; big.classList.remove('pop'); void big.offsetWidth; big.classList.add('pop'); }
+  film.addEventListener('keydown', function(e){
+    if(e.target.closest('.sc-track')) return;
+    if(e.key === ' ' || e.key === 'k'){ e.preventDefault(); if(playing){ userPaused = true; pause(); } else { userPaused = false; play(); } wake(); }
+  });
+  document.addEventListener('keydown', function(e){ if((e.key === 'f' || e.key === 'F') && !/INPUT|TEXTAREA/.test((e.target.tagName || ''))){ var r = film.getBoundingClientRect(); if(isFull || (r.top < innerHeight && r.bottom > 0)){ if(isFull) exitFull(); else enterFull(false); } } });
   film.__full = enterFull; film.__exitFull = exitFull;
   wrap.querySelectorAll('[data-film="full"]').forEach(function(b){ b.addEventListener('click', function(){ if(isFull) exitFull(); else enterFull(false); }); });
   wrap.querySelectorAll('[data-film="exitfull"]').forEach(function(b){ b.addEventListener('click', exitFull); });
