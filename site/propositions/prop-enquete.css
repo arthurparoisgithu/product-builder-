@@ -1,0 +1,21 @@
+/* Variantes vidéo des pages « enquête métier » (Lemer Pax, Europe Technologies, Idena, Armor) */
+.pan-bvid.v-lp,.vd-frame.v-lp{background:radial-gradient(80% 70% at 50% 0%,rgba(94,234,212,.12),transparent 60%),radial-gradient(70% 80% at 50% 100%,#13252a,#0a1316 72%);color:#eef7f6}
+.pan-bvid.v-et,.vd-frame.v-et{background:radial-gradient(80% 70% at 50% 0%,rgba(255,138,61,.14),transparent 60%),radial-gradient(70% 80% at 50% 100%,#24201c,#100e0c 72%);color:#f5efe8}
+.pan-bvid.v-id,.vd-frame.v-id{background:radial-gradient(80% 70% at 50% 0%,rgba(163,214,92,.14),transparent 60%),radial-gradient(70% 80% at 50% 100%,#1b2617,#0d130b 72%);color:#f1f6ea}
+.pan-bvid.v-ar,.vd-frame.v-ar{background:radial-gradient(80% 70% at 50% 0%,rgba(110,168,255,.14),transparent 60%),radial-gradient(70% 80% at 50% 100%,#161d2b,#0a0e16 72%);color:#eef2fa}
+.v-lp{--vx:#5eead4}.v-et{--vx:#ff8a3d}.v-id{--vx:#a3d65c}.v-ar{--vx:#6ea8ff}
+.pan-bvid.v-lp .pan-n,.pan-bvid.v-et .pan-n,.pan-bvid.v-id .pan-n,.pan-bvid.v-ar .pan-n{font-family:var(--serif);font-weight:400;letter-spacing:0;color:var(--vx)}
+.pan-bvid.v-lp .pan-k,.pan-bvid.v-et .pan-k,.pan-bvid.v-id .pan-k,.pan-bvid.v-ar .pan-k{color:var(--vx)}
+.pan-bvid.v-lp .pan-t,.pan-bvid.v-et .pan-t,.pan-bvid.v-id .pan-t,.pan-bvid.v-ar .pan-t{font-family:var(--serif);font-weight:400;text-transform:none;letter-spacing:-.01em;font-size:clamp(19px,3.1cqw,36px)}
+.v-lp .ti,.v-et .ti,.v-id .ti,.v-ar .ti{border-color:#000;box-shadow:0 0 0 1px rgba(255,255,255,.12),5px 5px 0 color-mix(in srgb,var(--vx) 22%,transparent);border-radius:6px}
+.v-lp .ev{background:radial-gradient(60% 55% at 50% 100%,#1f4a4a,#0f2426 60%,#071114)}
+.v-et .ev{background:radial-gradient(60% 55% at 50% 100%,#5a3418,#2a1a0e 60%,#120b06)}
+.v-id .ev{background:radial-gradient(60% 55% at 50% 100%,#355a24,#1a2c12 60%,#0b1308)}
+.v-ar .ev{background:radial-gradient(60% 55% at 50% 100%,#24406e,#121f38 60%,#080d18)}
+.v-lp .spot,.v-et .spot,.v-id .spot,.v-ar .spot{background:conic-gradient(from 160deg at 50% 0%,transparent 0deg,color-mix(in srgb,var(--vx) 45%,transparent) 20deg,transparent 40deg)}
+.v-lp .play,.v-lp .cc,.v-et .play,.v-et .cc,.v-id .play,.v-id .cc,.v-ar .play,.v-ar .cc{background:var(--vx);color:#0c0f12}
+.v-lp .ktx.s,.v-lp .tz,.v-et .ktx.s,.v-et .tz,.v-id .ktx.s,.v-id .tz,.v-ar .ktx.s,.v-ar .tz{color:var(--vx)}
+.v-lp .t-quote .ti,.v-et .t-quote .ti,.v-id .t-quote .ti,.v-ar .t-quote .ti{background:var(--vx)}
+.v-lp .fmt,.v-et .fmt,.v-id .fmt,.v-ar .fmt{color:#b9bcc4}
+.pan-bvid.v-lp .bv-side b,.pan-bvid.v-et .bv-side b,.pan-bvid.v-id .bv-side b,.pan-bvid.v-ar .bv-side b{color:var(--vx);font-family:var(--serif);font-weight:400;letter-spacing:0}
+.pan-bvid.v-lp .bv-tag,.pan-bvid.v-et .bv-tag,.pan-bvid.v-id .bv-tag,.pan-bvid.v-ar .bv-tag{background:rgba(255,255,255,.06);color:inherit;border:1px solid rgba(255,255,255,.14);box-shadow:4px 4px 0 color-mix(in srgb,var(--vx) 30%,transparent)}
